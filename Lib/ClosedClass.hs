@@ -23,15 +23,13 @@ closedMain = do
     return ()
 
 data Data1 = Data1 {s :: String}
-data Data2 = Data2 {f :: Text}
+data Data2 ft = Data2 {f :: ft}
 data Data3 = Data3 {i :: Int}
 
 type family IsA t where
---    op1 :: A t -> String      -- show
---    op2 :: A t -> A t -> A t  -- add
 -- only the following two types are acceptable
     IsA (Data1) = String
-    IsA (Data2) = Text
+    IsA (Data2 f) = Text
 
 class X p where
     op1 :: p -> IsA p      -- show
@@ -40,7 +38,7 @@ class X p where
 instance  X (Data1 ) where
     op1 (Data1 s) = show s
 
-instance  X (Data2 ) where
+instance Show f =>  X (Data2 f) where
     op1 (Data2 s) = s2t $ show s
 
 --instance  X (Data3) where    -- does not compile
@@ -48,12 +46,15 @@ instance  X (Data2 ) where
 
 d1 = Data1 "eines"
 d2 = Data2 "zwei"
+d2a = Data2 'a'
 d3 = Data3 3
 
--- show produces the "xx"
-test_1 = assertEqual 7 (lengthChar $ op1 d1)
-test_2 = assertEqual 6 (lengthChar $ op1 d2)
+-- show produces the "xx" form, thus 2 char longer than expected
+test_1 = assertEqual 7 (getLength d1)
+test_2 = assertEqual 6 (getLength d2)
+test_3 = assertEqual 3 (getLength d2a)
 
 
-
+getLength :: (CharChains (IsA a), X a) =>  a -> Int
+getLength a = lengthChar $ op1 a
 

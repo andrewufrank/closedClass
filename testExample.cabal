@@ -30,10 +30,14 @@ library
 --        data-easy
 ----        uniform-algebras
         ,uniform-strings
+        , HList
 
     exposed-modules:
          ClosedClass
          OpenClass
+         Peano
+--         HListRecords -- needs work to be up to date
+
 --        StringConversion
     --     Uniform.Strings
     -- -- for testing, afterwards include in test-suite
