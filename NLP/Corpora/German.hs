@@ -25,8 +25,8 @@ module  NLP.Corpora.German (module  NLP.Corpora.German
 import GHC.Generics
 import Data.Serialize (Serialize)
 import qualified Data.Text as T
-import Data.Text (Text)
-import Data.Utilities
+--import Data.Text (Text)
+--import Data.Utilities
 --import           Test.Framework
 import Test.QuickCheck.Arbitrary (Arbitrary(..))
 import Test.QuickCheck.Gen (elements)
@@ -34,11 +34,12 @@ import Test.QuickCheck.Gen (elements)
 --import Uniform.Zero
 --import Uniform.Strings
 --import Uniform.Error
-import Data.Text   as T (replace)
-import Text.Read (readEither)
+--import Data.Text   as T (replace)
+--import Text.Read (readEither)
 --import qualified NLP.Corpora.Conll      as Conll
 
 import qualified NLP.Types.Tags as NLP
+import Data.Utilities
 --import      NLP.Corpora.Conll
 --import      NLP.Corpora.Conll   as Conll
 
@@ -165,8 +166,8 @@ showTag :: POStagGerman -> Text
 --showTag Colon = ":"
 showTag tag = replaceAll reversePatterns (s2t $ show tag)
 
-replaceAll :: [(Text, Text)] -> (Text -> Text)
-replaceAll patterns = foldl (.) id (map (uncurry  T.replace) patterns)
+--replaceAll :: [(Text, Text)] -> (Text -> Text)
+--replaceAll patterns = foldl (.) id (map (uncurry  T.replace) patterns)
 
 --readTag :: Text -> ErrOrVal POStagGerman
 --readTag txt = maybe2errorP . read . t2s $ txt

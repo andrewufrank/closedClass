@@ -174,8 +174,8 @@ showTag :: POStagTinT -> Text
 --showTag Colon = ":"
 showTag tag = replaceAll reversePatterns (s2t $ show tag)
 
-replaceAll :: [(Text, Text)] -> (Text -> Text)
-replaceAll patterns = foldl (.) id (map (uncurry  T.replace) patterns)
+--replaceAll :: [(Text, Text)] -> (Text -> Text)
+--replaceAll patterns = foldl (.) id (map (uncurry  T.replace) patterns)
 
 --readTag :: Text -> ErrOrVal POStagTinT
 --readTag txt = maybe2errorP . read . t2s $ txt

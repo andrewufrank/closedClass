@@ -10,6 +10,7 @@ import qualified Data.Text as T
 import GHC.Generics
 import Text.Read (readEither)
 
+import Data.Utilities
 
 import Test.QuickCheck (Arbitrary(..), NonEmptyList(..))
 import Test.QuickCheck.Instances ()
@@ -29,7 +30,7 @@ class (Ord a, Eq a, Read a, Show a, Generic a, Serialize a) => NERtags a where
 -- are much like POS tags, but should not be confused. Generally,
 -- chunks distinguish between different phrasal categories (e.g.; Noun
 -- Phrases, Verb Phrases, Prepositional Phrases, etc..)
-class (Ord a, Eq a, Read a, Show a, Generic a, Serialize a) => ChunkTag a where
+class (Ord a, Eq a, Read a, Show a, Generic a, Serialize a) => ChunkTags a where
   fromChunk :: a -> Text
   parseChunk :: Text -> Either Error a
   notChunk :: a
@@ -50,14 +51,24 @@ class (Ord a, Eq a, Read a, Show a, Generic a, Serialize a) => ChunkTag a where
 --
 -- This /may/ get renamed to POSTag at some later date.
 class (Ord a, Eq a, Read a, Show a, Generic a, Serialize a) => POStags a where
-  fromTag :: a -> Text
-  parseTag :: Text -> a
-  tagUNK :: a
-  tagTerm :: a -> Text
-  startTag :: a
-  endTag :: a
-  -- | Check if a tag is a determiner tag.
-  isDt :: a -> Bool
+    fromTag :: a -> Text
+    parseTag :: Text -> a
+    tagUNK :: a
+    tagTerm :: a -> Text
+    startTag :: a
+    endTag :: a
+    -- | Check if a tag is a determiner tag.
+    isDt :: a -> Bool
+
+    -- lower level default implementations
+    showTag2 :: [(Text, Text)] -> a -> Text
+    showTag2 tagTxtPatterns tag = replaceAll (reversePatterns tagTxtPatterns) (s2t $ show tag)
+
+    readTag2 :: [(Text, Text)] -> Text -> a
+    readTag2 tagTxtPatterns = either (return tagUNK) id . readOrErr . normalized tagTxtPatterns
+
+--    normalized :: [(Text, Text)] ->  Text -> a
+--    normalized tagTxtPatterns = replaceAll tagTxtPatterns (T.toUpper txt)
 
 class TagsetIDs t where
     tagsetURL :: t ->  Text
@@ -68,7 +79,7 @@ newtype RawChunk = RawChunk Text
 
 instance Serialize RawChunk
 
-instance ChunkTag RawChunk where
+instance ChunkTags RawChunk where
   fromChunk (RawChunk ch) = ch
   parseChunk txt = Right (RawChunk txt)
   notChunk = RawChunk "O"

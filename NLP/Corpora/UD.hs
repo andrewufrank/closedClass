@@ -32,6 +32,7 @@ import GHC.Generics
 
 import qualified NLP.Types.Tags as NLP
 import NLP.Types.General
+import Data.Utilities (readOrErr, ErrOrVal (..), Error, s2t)
 --import NLP.Types.Tree hiding (Chunk)
 -- import NLP.Types.IOB
 
@@ -114,8 +115,8 @@ showTag :: POStag -> Text
 --showTag Colon = ":"
 showTag tag = replaceAll reversePatterns (s2t $ show tag)
 
-replaceAll :: [(Text, Text)] -> (Text -> Text)
-replaceAll patterns = foldl (.) id (map (uncurry  T.replace) patterns)
+--replaceAll :: [(Text, Text)] -> (Text -> Text)
+--replaceAll patterns = foldl (.) id (map (uncurry  T.replace) patterns)
 
 --readTag :: Text -> ErrOrVal POStag
 --readTag txt = maybe2errorP . read . t2s $ txt

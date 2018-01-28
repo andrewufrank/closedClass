@@ -135,8 +135,8 @@ tagTxtPatterns = [ ("$", "Dollar")    -- because dollar is always in first posit
                    , (".", "point")
                  ]
 
-reversePatterns :: [(Text, Text)]
-reversePatterns = map (\(x,y) -> (y,x)) tagTxtPatterns
+--reversePatterns :: [(Text, Text)]
+--reversePatterns = map (\(x,y) -> (y,x)) tagTxtPatterns
 
 showTag :: POStagFrench -> Text
 --showTag Hash = "#"
@@ -148,10 +148,11 @@ showTag :: POStagFrench -> Text
 --showTag Comma = ","
 --showTag Term = "."
 --showTag Colon = ":"
-showTag tag = replaceAll reversePatterns (s2t $ show tag)
+showTag tag = showTag2 tagTxtPatterns tag
+--    replaceAll reversePatterns (s2t $ show tag)
 
-replaceAll :: [(Text, Text)] -> (Text -> Text)
-replaceAll patterns = foldl (.) id (map (uncurry  T.replace) patterns)
+--replaceAll :: [(Text, Text)] -> (Text -> Text)
+--replaceAll patterns = foldl (.) id (map (uncurry  T.replace) patterns)
 
 --readTag :: Text -> ErrOrVal POStagFrench
 --readTag txt = maybe2errorP . read . t2s $ txt

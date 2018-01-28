@@ -1,12 +1,12 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 module NLP.Types.General (module NLP.Types.General
-    , module Data.Utilities
+--    , module Data.Utilities
     ) where
 
 import Data.Serialize (Serialize)
-import Data.Text (Text)
-import qualified Data.Text as T
+--import Data.Text (Text)
+--import qualified Data.Text as T
 import GHC.Generics
 
 import Test.QuickCheck (Arbitrary(..), elements)

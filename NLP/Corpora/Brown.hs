@@ -6,7 +6,7 @@ module NLP.Corpora.Brown
  (module NLP.Corpora.Brown
  ,  POStag(..)
  , Chunk(..)
- , NLP.POStags (..)
+ , POStags (..)
 -- , parseTaggedSentences
 
  )
@@ -15,14 +15,16 @@ where
 import Data.Serialize (Serialize)
 import qualified Data.Text as T
 import Data.Text (Text)
-import Text.Read (readEither)
+--import Text.Read (readEither)
 import Test.QuickCheck.Arbitrary (Arbitrary(..))
 import Test.QuickCheck.Gen (elements)
 
 import GHC.Generics
 
-import qualified NLP.Types.Tags as NLP
+import  NLP.Types.Tags  (NERtags (..), POStags (..), TagsetIDs (..)
+                    , ChunkTags (..))
 import NLP.Types.General
+import Data.Utilities
 --import NLP.Types.Tree hiding (Chunk)
 --import NLP.Corpora.Parsing (readPOS)
 
@@ -44,7 +46,7 @@ instance Serialize Chunk
 
 instance Serialize POStag
 
-instance NLP.POStags POStag where
+instance POStags POStag where
   fromTag = showBrownTag
 
   parseTag txt = case parseBrownTag txt of
@@ -74,7 +76,7 @@ parseBrownTag "." = Right Term
 parseBrownTag ":" = Right Colon
 parseBrownTag txt =
   let normalized = replaceAll tagTxtPatterns (T.toUpper txt)
-  in toEitherErr (readEither $ T.unpack normalized)
+  in readOrErr normalized -- toEitherErr (readEither $ T.unpack normalized)
 
 
 -- | Order matters here: The patterns are replaced in reverse order
@@ -86,8 +88,8 @@ tagTxtPatterns = [ ("-", "_")
                  , ("$", "dollar")
                  ]
 
-reversePatterns :: [(Text, Text)]
-reversePatterns = map (\(x,y) -> (y,x)) tagTxtPatterns
+--reversePatterns :: [(Text, Text)]
+--reversePatterns = map (\(x,y) -> (y,x)) tagTxtPatterns
 
 showBrownTag :: POStag -> Text
 showBrownTag Op_Paren = "("
@@ -97,15 +99,18 @@ showBrownTag Comma = ","
 showBrownTag Dash = "-"
 showBrownTag Term = "."
 showBrownTag Colon = ":"
-showBrownTag tag = replaceAll reversePatterns (T.pack $ show tag)
+showBrownTag tag = replaceAll (reversePatterns tagTxtPatterns) (T.pack $ show tag)
 
-replaceAll :: [(Text, Text)] -> (Text -> Text)
-replaceAll patterns = foldl (.) id (map (uncurry T.replace) patterns)
+--replaceAll :: [(Text, Text)] -> (Text -> Text)
+--replaceAll patterns = foldl (.) id (map (uncurry T.replace) patterns)
 
-instance NLP.ChunkTag Chunk where
+instance ChunkTags Chunk where
   fromChunk = T.pack . show
-  parseChunk txt = toEitherErr $ readEither (T.unpack $ T.append "C_" txt)
+  parseChunk txt = readOrErr (  T.append "C_" txt)
   notChunk = C_O
+instance TagsetIDs POStag where
+    tagsetURL _ = "https://hackage.haskell.org/package/chatter-0.9.1.0/docs/NLP-Corpora-Conll.html"
+    -- this is the original haskell code of which this is a copy
 
 data POStag = START -- ^ START tag, used in training.
          | END -- ^ END tag, used in training.

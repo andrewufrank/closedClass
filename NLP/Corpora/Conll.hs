@@ -4,20 +4,23 @@
 -- the Conll2000 training corpus.
 module NLP.Corpora.Conll (
     module NLP.Corpora.Conll
-    , NLP.POStags (..)
+    , POStags (..)
     ) where
 
 import Data.Serialize (Serialize)
 import qualified Data.Text as T
 import Data.Text (Text)
-import Text.Read (readEither)
+--import Text.Read (readEither)
 import Test.QuickCheck.Arbitrary (Arbitrary(..))
 import Test.QuickCheck.Gen (elements)
 
 import GHC.Generics
 
-import qualified NLP.Types.Tags as NLP
+--import qualified NLP.Types.Tags as NLP
+import  NLP.Types.Tags  (NERtags (..), POStags (..), TagsetIDs (..)
+                    , ChunkTags (..))
 import NLP.Types.General
+import Data.Utilities
 --import NLP.Types.Tree hiding (Chunk)
 -- import NLP.Types.IOB
 
@@ -41,7 +44,10 @@ instance Arbitrary NERtag where
   arbitrary = elements [minBound..]
 
 instance Serialize NERtag
-instance NLP.NERtags NERtag
+instance NERtags NERtag
+
+instance TagsetIDs NERtag where
+    tagsetURL _  = "Conll"
 
 -- | Phrase chunk tags defined for the Conll task.
 data Chunk = ADJP
@@ -64,10 +70,10 @@ instance Arbitrary Chunk where
 instance Serialize Chunk
 
 
-instance NLP.POStags POStag where
+instance POStags POStag where
   fromTag = showTag
 
-  parseTag txt = case readTag txt of
+  parseTag txt = case readConllTag txt of
                    Left  _ -> Unk
                    Right t -> t
 
@@ -85,19 +91,19 @@ instance Arbitrary POStag where
   arbitrary = elements [minBound ..]
 instance Serialize POStag
 
-readTag :: Text -> Either Error POStag
-readTag "#" = Right Hash
-readTag "$" = Right Dollar
-readTag "(" = Right Op_Paren
-readTag ")" = Right Cl_Paren
-readTag "''" = Right CloseDQuote
-readTag "``" = Right OpenDQuote
-readTag "," = Right Comma
-readTag "." = Right Term
-readTag ":" = Right Colon
-readTag txt =
-  let normalized = replaceAll tagTxtPatterns (T.toUpper txt)
-  in toEitherErr (readEither $ T.unpack normalized)
+readConllTag :: Text -> Either Error POStag
+readConllTag "#" = Right Hash
+readConllTag "$" = Right Dollar
+readConllTag "(" = Right Op_Paren
+readConllTag ")" = Right Cl_Paren
+readConllTag "''" = Right CloseDQuote
+readConllTag "``" = Right OpenDQuote
+readConllTag "," = Right Comma
+readConllTag "." = Right Term
+readConllTag ":" = Right Colon
+readConllTag txt = Right $ readTag2 tagTxtPatterns txt
+--  let normalized = replaceAll tagTxtPatterns (T.toUpper txt)
+--  in readOrErr normalized
 
 -- | Order matters here: The patterns are replaced in reverse order
 -- when generating tags, and in top-to-bottom when generating tags.
@@ -118,15 +124,20 @@ showTag Dollar = "$"
 showTag Comma = ","
 showTag Term = "."
 showTag Colon = ":"
-showTag tag = replaceAll reversePatterns (T.pack $ show tag)
+showTag tag = showTag2 tagTxtPatterns tag
+--    replaceAll (reversePatterns tagTxtPatterns) (T.pack $ show tag)
 
-replaceAll :: [(Text, Text)] -> (Text -> Text)
-replaceAll patterns = foldl (.) id (map (uncurry T.replace) patterns)
+--replaceAll :: [(Text, Text)] -> (Text -> Text)
+--replaceAll patterns = foldl (.) id (map (uncurry T.replace) patterns)
 
-instance NLP.ChunkTag Chunk where
+instance ChunkTags Chunk where
   fromChunk = T.pack . show
-  parseChunk txt = toEitherErr $ readEither $ T.unpack txt
+  parseChunk txt =readOrErr  txt
   notChunk = O
+
+instance TagsetIDs POStag where
+    tagsetURL _ = "https://en.wikipedia.org/wiki/Brown_Corpus#Part-of-speech_tags_used"
+    -- this is a wiki page, anything better?
 
 -- | These tags may actually be the Penn Treebank tags.  But I have
 -- not (yet?) seen the punctuation tags added to the Penn set.

@@ -12,6 +12,8 @@ module Main     where      -- must have Main (main) or Main where
 
 import           Test.Framework
 
+import {-@ HTF_TESTS @-} Data.Utilities
+
 import {-@ HTF_TESTS @-} NLP.Corpora.BrownTests
 import {-@ HTF_TESTS @-} NLP.Corpora.ConllTests
 

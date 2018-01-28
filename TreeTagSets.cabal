@@ -25,7 +25,7 @@ library
         , text
         , QuickCheck
         , quickcheck-instances
---        ,quickcheck-text
+        , quickcheck-text
 --        numeric-prelude,
 --        snap-core,
 --        safe,
@@ -37,17 +37,14 @@ library
 --        ,uniform-strings
 
     exposed-modules:
---                     NLP.Corpora.Parsing
---                     NLP.Corpora.Email
                      NLP.Corpora.Brown
                      NLP.Corpora.Conll
-                     NLP.Corpora.UD
---                     NLP.Corpora.WikiNer
-                     NLP.Corpora.French
-                     NLP.Corpora.FrenchUD
-                     NLP.Corpora.German
-                     NLP.Corpora.Spanish
-                     NLP.Corpora.ItalianTinT
+--                     NLP.Corpora.UD
+--                     NLP.Corpora.French
+--                     NLP.Corpora.FrenchUD
+--                     NLP.Corpora.German
+--                     NLP.Corpora.Spanish
+--                     NLP.Corpora.ItalianTinT
                      Data.Utilities
                      NLP.Types.Tags
                      NLP.Types.General
