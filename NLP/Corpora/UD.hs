@@ -24,8 +24,7 @@ module NLP.Corpora.UD (module NLP.Corpora.UD
 import Data.Serialize (Serialize)
 import qualified Data.Text as T
 import Data.Text (Text)
-import Data.Utilities
-import Text.Read (readEither)
+--import Data.Utilities
 import Test.QuickCheck.Arbitrary (Arbitrary(..))
 import Test.QuickCheck.Gen (elements)
 
@@ -58,6 +57,8 @@ data POStag =   -- copied from http://universaldependencies.org/u/pos/
     X  -- other
         deriving (Read, Show, Ord, Eq, Generic, Enum, Bounded)
 
+instance NLP.TagsetIDs POStag where
+    tagsetURL _ = "http://universaldependencies.org/u/pos/"
 
 instance NLP.POStags  POStag where
 --parseTag :: Text -> PosTag
@@ -124,10 +125,10 @@ replaceAll patterns = foldl (.) id (map (uncurry  T.replace) patterns)
 --maybe2errorP (Just a) = Right a
 
 -- @since 4.6.0.0
-readOrErr :: Read a => Text -> Either Text a
-readOrErr    t = case (readEither (t2s t)) of
-                        Left msg -> Left (s2t msg)
-                        Right a -> Right a
+--readOrErr :: Read a => Text -> Either Text a
+--readOrErr    t = case (readEither (t2s t)) of
+--                        Left msg -> Left (s2t msg)
+--                        Right a -> Right a
 
 --instance CharChains2 POStag String where
 --    show' =  show

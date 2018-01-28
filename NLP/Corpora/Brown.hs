@@ -64,7 +64,7 @@ instance NLP.POStags POStag where
 instance Arbitrary POStag where
   arbitrary = elements [minBound ..]
 
-parseBrownTag :: Text -> Either Error POStag
+parseBrownTag :: Text -> ErrOrVal POStag
 parseBrownTag "(" = Right Op_Paren
 parseBrownTag ")" = Right Cl_Paren
 parseBrownTag "*" = Right Negator

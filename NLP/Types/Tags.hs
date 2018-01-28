@@ -14,7 +14,7 @@ import Text.Read (readEither)
 import Test.QuickCheck (Arbitrary(..), NonEmptyList(..))
 import Test.QuickCheck.Instances ()
 
-import NLP.Types.General (Error, toEitherErr)
+import Data.Utilities (Error, toEitherErr)
 
 -- | The class of named entity sets.  This typeclass can be defined
 -- entirely in terms of the required class constraints.
@@ -58,6 +58,9 @@ class (Ord a, Eq a, Read a, Show a, Generic a, Serialize a) => POStags a where
   endTag :: a
   -- | Check if a tag is a determiner tag.
   isDt :: a -> Bool
+
+class TagsetIDs t where
+    tagsetURL :: t ->  Text
 
 -- | A fall-back 'ChunkTag' instance, analogous to 'RawTag'
 newtype RawChunk = RawChunk Text

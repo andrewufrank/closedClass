@@ -1,7 +1,8 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
-module NLP.Types.General
-where
+module NLP.Types.General (module NLP.Types.General
+    , module Data.Utilities
+    ) where
 
 import Data.Serialize (Serialize)
 import Data.Text (Text)
@@ -10,12 +11,7 @@ import GHC.Generics
 
 import Test.QuickCheck (Arbitrary(..), elements)
 
--- | Just a handy alias for Text
-type Error = Text
-
-toEitherErr :: Either String a -> Either Error a
-toEitherErr (Left s) = Left (T.pack s)
-toEitherErr (Right r) = Right r
+import Data.Utilities
 
 -- | Boolean type to indicate case sensitivity for textual
 -- comparisons.

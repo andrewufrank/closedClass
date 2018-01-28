@@ -175,10 +175,10 @@ replaceAll patterns = foldl (.) id (map (uncurry  T.replace) patterns)
 --maybe2errorP Nothing = Left "readTag POStagGerman 34232"
 --maybe2errorP (Just a) = Right a
 
-readOrErr :: Read a => Text -> Either Text a
-readOrErr    t = case (readEither (t2s t)) of
-                        Left msg -> Left (s2t msg)
-                        Right a -> Right a
+--readOrErr :: Read a => Text -> Either Text a
+--readOrErr    t = case (readEither (t2s t)) of
+--                        Left msg -> Left (s2t msg)
+--                        Right a -> Right a
 
 --instance CharChains2 POStagGerman String where
 --    show' =  show

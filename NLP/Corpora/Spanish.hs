@@ -38,7 +38,7 @@ import Test.QuickCheck.Gen (elements)
 --import Uniform.Strings
 --import Uniform.Error
 import Data.Text   as T (replace)
-import Text.Read (readEither)
+--import Text.Read (readEither)
 --import qualified NLP.Corpora.Conll      as Conll
 
 import qualified NLP.Types.Tags as NLPtypes
@@ -223,10 +223,10 @@ showTag tag = T.toLower   (s2t $ show tag)
 --maybe2errorP Nothing = Left "readTag POStagSpanish 34232"
 --maybe2errorP (Just a) = Right a
 
-readOrErr :: Read a => Text -> Either Text a
-readOrErr    t = case (readEither (t2s t)) of
-                        Left msg -> Left (s2t msg)
-                        Right a -> Right a
+--readOrErr :: Read a => Text -> Either Text a
+--readOrErr    t = case (readEither (t2s t)) of
+--                        Left msg -> Left (s2t msg)
+--                        Right a -> Right a
 
 --instance CharChains2 POStagSpanish String where
 --    show' =  show
