@@ -3,8 +3,10 @@
 -- | The internal implementation of critical types in terms of the
 -- Brown corpus.
 module NLP.Corpora.Brown
- ( POStag(..)
+ (module NLP.Corpora.Brown
+ ,  POStag(..)
  , Chunk(..)
+ , NLP.POStags (..)
 -- , parseTaggedSentences
 
  )
@@ -19,7 +21,7 @@ import Test.QuickCheck.Gen (elements)
 
 import GHC.Generics
 
-import qualified NLP.Types.Tags as T
+import qualified NLP.Types.Tags as NLP
 import NLP.Types.General
 --import NLP.Types.Tree hiding (Chunk)
 --import NLP.Corpora.Parsing (readPOS)
@@ -42,7 +44,7 @@ instance Serialize Chunk
 
 instance Serialize POStag
 
-instance T.POStags POStag where
+instance NLP.POStags POStag where
   fromTag = showBrownTag
 
   parseTag txt = case parseBrownTag txt of
@@ -100,7 +102,7 @@ showBrownTag tag = replaceAll reversePatterns (T.pack $ show tag)
 replaceAll :: [(Text, Text)] -> (Text -> Text)
 replaceAll patterns = foldl (.) id (map (uncurry T.replace) patterns)
 
-instance T.ChunkTag Chunk where
+instance NLP.ChunkTag Chunk where
   fromChunk = T.pack . show
   parseChunk txt = toEitherErr $ readEither (T.unpack $ T.append "C_" txt)
   notChunk = C_O
