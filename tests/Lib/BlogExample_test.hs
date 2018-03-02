@@ -17,7 +17,8 @@ module Lib.BlogExample_test  -- (openMain, htf_thisModuelsTests)
 
 import           Test.Framework
 import           Uniform.Strings
-import qualified Data.ByteString.Lazy as B
+import Uniform.FileIO
+--import qualified Data.ByteString.Lazy as B
 
 import Lib.BlogExample
 
@@ -26,12 +27,14 @@ import Lib.BlogExample
 
 -- show produces the "xx"
 test_1 = do
-    f <- readBSlazy  "blog.json"
-    let r = decodeFlickrResponse f  -- :: Maybe [FlickrResponse]
-    putIOwords ["decoded", showT r]
-    assertEqual res (show r)
+    res0 <- runErr $ do
+        f <- readFile2  (makeRelFile "blog.json")
+        let r = decodeFlickrResponse f  -- :: Maybe [FlickrResponse]
+        putIOwords ["decoded", showT r]
+        return r
+    assertEqual res (show res0)
 
-res =  "Just [FlickrResponse {f_photoset = Photoset {set_id = \"72157694654577774\", set_primary = \"9774229501\", set_owner = \"101926234@N03\", set_ownername = \"mayer_tom\", set_photo = [Photo {photo_id = \"9771234001\", photo_secret = \"82sd0454a2\", photo_server = \"7348\", photo_farm = 7, photo_title = \"TESTConf test\", photo_isprimary = \"0\", photo_ispublic = 1, photo_isfriend = 0, photo_isfamily = 0}], set_page = 1, set_per_page = 500, set_perpage = 500, set_pages = 1, set_total = \"34\", set_title = \"TESTConf test\"}, f_stat = \"ok\"}]"
+res =  "Right (Just [FlickrResponse {f_photoset = Photoset {set_id = \"72157694654577774\", set_primary = \"9774229501\", set_owner = \"101926234@N03\", set_ownername = \"mayer_tom\", set_photo = [Photo {photo_id = \"9771234001\", photo_secret = \"82sd0454a2\", photo_server = \"7348\", photo_farm = 7, photo_title = \"TESTConf test\", photo_isprimary = \"0\", photo_ispublic = 1, photo_isfriend = 0, photo_isfamily = 0}], set_page = 1, set_per_page = 500, set_perpage = 500, set_pages = 1, set_total = \"34\", set_title = \"TESTConf test\"}, f_stat = \"ok\"}])"
 
 
 

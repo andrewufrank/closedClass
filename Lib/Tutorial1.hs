@@ -18,14 +18,15 @@ module Lib.Tutorial1  -- (openMain, htf_thisModuelsTests)
 
 
 import           Uniform.Strings
+import Uniform.FileIO
 
 import Data.Aeson
 import GHC.Generics
-import qualified Data.ByteString.Lazy as B
+--import qualified Data.ByteString.Lazy as B
 
-tutorial1Main :: IO ()
+tutorial1Main :: ErrIO ()
 tutorial1Main = do
-    f <- readBSlazy  "tutorial1.json"
+    f :: LazyByteString <- readFile2  (makeRelFile "tutorial1.json")
     let r = decode f  :: Maybe [Person]
     putIOwords ["decoded", showT r]
     return ()
@@ -34,7 +35,7 @@ tutorial1Main = do
 --encode :: ToJSON a => a -> ByteString
 --eitherDecode :: FromJSON a => ByteString -> Either String a
 
-decodePerson :: B.ByteString -> Maybe [Person]
+decodePerson :: LazyByteString -> Maybe [Person]
 decodePerson = decode
 
 data Person =
@@ -51,8 +52,8 @@ instance ToJSON Person
 --jsonFile :: FilePath
 --jsonFile = "tutorial1.json"
 --
-readBSlazy :: FilePath ->  IO B.ByteString
-readBSlazy  =  B.readFile
+--readBSlazy :: FilePath ->  IO B.ByteString
+--readBSlazy  =  B.readFile
 
 
 

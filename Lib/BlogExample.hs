@@ -17,21 +17,22 @@ module Lib.BlogExample  -- (openMain, htf_thisModuelsTests)
      where
 
 import           Uniform.Strings
+import Uniform.FileIO
 
 import Data.Aeson
 import Data.Aeson.Types  -- for modifying the labels
 import GHC.Generics
-import qualified Data.ByteString.Lazy as B
+--import qualified Data.ByteString.Lazy as B
 import Control.Monad (mzero)
 
-blogMain :: IO ()
+blogMain :: ErrIO ()
 blogMain = do
-    f <- readBSlazy "blog.json"
+    f :: LazyByteString <- readFile2 (makeRelFile "blog.json")
     let r = decode f  :: Maybe [FlickrResponse]
     putIOwords ["decoded", showT r]
     return ()
 
-decodeFlickrResponse :: B.ByteString -> Maybe [FlickrResponse]
+decodeFlickrResponse :: LazyByteString -> Maybe [FlickrResponse]
 decodeFlickrResponse = decode
 
 data Photo = Photo
@@ -111,8 +112,8 @@ instance FromJSON FlickrResponse where
 
 
 
-readBSlazy :: FilePath ->  IO B.ByteString
-readBSlazy  =  B.readFile
+--readBSlazy :: FilePath ->  IO B.ByteString
+--readBSlazy  =  B.readFile
 
 
 

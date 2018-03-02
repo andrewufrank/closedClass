@@ -1,5 +1,5 @@
 name: testExample
-version: 0.0.2
+version: 0.0.3
 cabal-version: >=1.20
 build-type: Simple
 license: AllRightsReserved
@@ -16,7 +16,7 @@ library
 --        network-uri,
 --        monads-tf,
         , HTF
-        , bytestring
+--        , bytestring
 --        text, utf8-string,
         -- for testing
         , test-invariant
@@ -30,6 +30,7 @@ library
 --        data-easy
 ----        uniform-algebras
         , uniform-strings
+        , uniform-fileio
         , aeson
 
     exposed-modules:
@@ -50,6 +51,7 @@ executable main
     build-depends: base, HTF
         , testExample >=0.0.2
         , uniform-strings
+        , uniform-convenience
 --        , safe
 --        -- , test-framework  -- clash with HTF
 --        , test-invariant
@@ -69,7 +71,9 @@ Test-Suite TestAuto
     build-depends: base, HTF
             , testExample >=0.0.2
             , uniform-strings
-        , bytestring
+            , uniform-fileio
+--            , uniform-convenience
+--        , bytestring
 --        , safe
         -- , test-framework
 --        , test-invariant
