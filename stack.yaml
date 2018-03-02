@@ -1,7 +1,9 @@
 flags: {}
 extra-package-dbs: []
 packages:
-- '.'
-- ../uniform-strings
-extra-deps: []
-resolver: lts-8.13
+- .
+- location: /home/frank/Workspace8/uniform/uniform-strings
+  extra-dep: true
+extra-deps:
+- test-invariant-0.4.5.0
+resolver: lts-9.1

@@ -1,20 +1,20 @@
 -----------------------------------------------------------------------------
 --
--- Module      :   a test for HTF framework
--- insert {-@ HTF_TESTS @-} for each import
+-- Module      :   main for tests
 -----------------------------------------------------------------------------
---{-# OPTIONS_GHC -F -pgmF htfpp #-}
 
 module Main     where      -- must have Main (main) or Main where
 
 
 --import System.Exit
 
-import           ClosedClass
-import           OpenClass
+--import           ClosedClass
+import           Lib.BlogExample
+import  Lib.Tutorial1
 
 main :: IO ()
 main =  do  -- with tests in other modules
-    closedMain
-    openMain
+    tutorial1Main
+--    closedMain
+--    blogMain
 
