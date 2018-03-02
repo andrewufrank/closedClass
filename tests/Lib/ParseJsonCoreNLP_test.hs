@@ -29,14 +29,11 @@ import Lib.ParseJsonCoreNLP
 test_1 = do
     res0 <- runErr $ do
         f <- readFile2  (makeRelFile "short1.json")
-        let r = decodeFlickrResponse f  -- :: Maybe [FlickrResponse]
+        let r = decodeDoc1 f  -- :: Maybe [Doc1]
         putIOwords ["decoded", showT r]
         return r
     assertEqual res (show res0)
 
 res =  ""
-
-
---test_2 = assertEqual 6 6
 
 
