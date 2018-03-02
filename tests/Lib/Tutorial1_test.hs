@@ -21,16 +21,13 @@ import           Uniform.Strings
 import qualified Data.ByteString.Lazy as B
 
 import Lib.Tutorial1
-import Data.String
-
-jsonFile :: FilePath
-jsonFile = "tutorial1.json"
+--import Data.String
 
 
 -- show produces the "xx"
 test_1 = do
     f <- readBSlazy  "tutorial1.json"
-    let r = decodePerson f :: Maybe [Person]
+    let r = decodePerson f -- :: Maybe [Person]
     putIOwords ["decoded", showT r]
     assertEqual res (show r)
 test_2 = assertEqual 6 6

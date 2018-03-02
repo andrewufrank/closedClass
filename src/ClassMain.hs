@@ -14,7 +14,8 @@ import  Lib.Tutorial1
 
 main :: IO ()
 main =  do  -- with tests in other modules
-    tutorial1Main
+--    tutorial1Main
+    blogMain
 --    closedMain
 --    blogMain
 

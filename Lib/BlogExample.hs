@@ -25,13 +25,16 @@ import Control.Monad (mzero)
 
 blogMain :: IO ()
 blogMain = do
-    f <- getJSON
+    f <- readBSlazy "blog.json"
     let r = decode f  :: Maybe [FlickrResponse]
     putIOwords ["decoded", showT r]
     return ()
 
+decodeFlickrResponse :: B.ByteString -> Maybe [FlickrResponse]
+decodeFlickrResponse = decode
+
 data Photo = Photo
-    { id   :: Text
+    { photoid   :: Text
     , secret    :: Text
     , server    :: Text
     , farm      :: Int
@@ -43,7 +46,7 @@ data Photo = Photo
     } deriving Show
 
 data Photoset = Photoset
-    { psid :: Text
+    { photosetid :: Text
     , primary    :: Text
     , owner      :: Text
     , ownername  :: Text
@@ -60,11 +63,6 @@ data FlickrResponse = FlickrResponse
     { photoset :: Photoset
     , stat     :: Text
     } deriving Show
-
--- for generics:
---instance FromJSON Photo
---instance FromJSON Photoset
---instance FromJSON FlickrResponse
 
 instance FromJSON Photo where
     parseJSON (Object v) =
@@ -100,11 +98,9 @@ instance FromJSON FlickrResponse where
                        <*> v .: "stat"
 
 
-jsonFile :: FilePath
-jsonFile = "blog.json"
 
-getJSON :: IO B.ByteString
-getJSON = B.readFile jsonFile
+readBSlazy :: FilePath ->  IO B.ByteString
+readBSlazy  =  B.readFile
 
 
 
