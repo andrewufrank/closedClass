@@ -11,23 +11,32 @@
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE OverloadedStrings     #-}
-module BlogExample_test  -- (openMain, htf_thisModuelsTests)
+module Lib.ParseJsonCoreNLP_test  -- (openMain, htf_thisModuelsTests)
      where
 
 
 import           Test.Framework
 import           Uniform.Strings
+import Uniform.FileIO
+--import qualified Data.ByteString.Lazy as B
+
+import Lib.ParseJsonCoreNLP
 
 
 
-d1 = Data1 "eines"
-d2 = Data2 "zwei"
-d3 = Data3 3
 
 -- show produces the "xx"
-test_1 = assertEqual 7 (lengthChar $ op1 d1)
-test_2 = assertEqual 6 (lengthChar $ op1 d2)
+test_1 = do
+    res0 <- runErr $ do
+        f <- readFile2  (makeRelFile "short1.json")
+        let r = decodeFlickrResponse f  -- :: Maybe [FlickrResponse]
+        putIOwords ["decoded", showT r]
+        return r
+    assertEqual res (show res0)
+
+res =  ""
 
 
+--test_2 = assertEqual 6 6
 
 

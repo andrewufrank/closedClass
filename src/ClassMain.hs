@@ -18,8 +18,10 @@ module Main     where      -- must have Main (main) or Main where
 --import System.Exit
 
 --import           ClosedClass
-import           Lib.BlogExample
-import  Lib.Tutorial1
+--import           Lib.BlogExample
+--import  Lib.Tutorial1
+import  Lib.ParseJsonCoreNLP
+
 import Uniform.Convenience.StartApp
 
 main :: IO ()
@@ -37,7 +39,8 @@ progTitle = "test Example"
 main2 :: IO ()
 main2 = startProg programName   progTitle
     (do
-        tutorial1Main
-        blogMain
+--        tutorial1Main
+--        blogMain
+        parseNLP
     )
 

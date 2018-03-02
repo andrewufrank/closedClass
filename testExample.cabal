@@ -37,6 +37,7 @@ library
 --         ClosedClass
          Lib.BlogExample
          Lib.Tutorial1
+         Lib.ParseJsonCoreNLP
 --        StringConversion
     --     Uniform.Strings
     -- -- for testing, afterwards include in test-suite
@@ -87,3 +88,4 @@ Test-Suite TestAuto
     other-modules:
          Lib.BlogExample_test
          Lib.Tutorial1_test
+         Lib.ParseJsonCoreNLP_test
