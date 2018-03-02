@@ -31,14 +31,7 @@ test_1 = do
     putIOwords ["decoded", showT r]
     assertEqual res (show r)
 
-res = "Just [FlickrResponse {photoset = Photoset \
-\{photosetid = \"72157694654577774\", primary = \"9774229501\", \
-\owner = \"101926234@N03\", ownername = \"mayer_tom\", photo = \
-\[Photo {photoid = \"9771234001\", secret = \"82sd0454a2\", \
-\server = \"7348\", farm = 7, title = \"TESTConf test\", \
-\isprimary = \"0\", ispublic = 1, isfriend = 0, isfamily = 0}], \
-\page = 1, per_page = 500, perpage = 500, pages = 1, total = \"34\", \
-\name = \"TESTConf test\"}, stat = \"ok\"}]"
+res =  "Just [FlickrResponse {f_photoset = Photoset {set_id = \"72157694654577774\", set_primary = \"9774229501\", set_owner = \"101926234@N03\", set_ownername = \"mayer_tom\", set_photo = [Photo {photo_id = \"9771234001\", photo_secret = \"82sd0454a2\", photo_server = \"7348\", photo_farm = 7, photo_title = \"TESTConf test\", photo_isprimary = \"0\", photo_ispublic = 1, photo_isfriend = 0, photo_isfamily = 0}], set_page = 1, set_per_page = 500, set_perpage = 500, set_pages = 1, set_total = \"34\", set_title = \"TESTConf test\"}, f_stat = \"ok\"}]"
 
 
 
