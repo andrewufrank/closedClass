@@ -10,11 +10,11 @@ module Main     where      -- must have Main (main) or Main where
 
 --import System.Exit
 
-import           ClosedClass
-import           OpenClass
+import           Direct
+--import           OpenClass
 
 main :: IO ()
 main =  do  -- with tests in other modules
-    closedMain
-    openMain
+    aOp
+--    openMain
 
