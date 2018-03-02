@@ -25,7 +25,7 @@ import qualified Data.ByteString.Lazy as B
 
 tutorial1Main :: IO ()
 tutorial1Main = do
-    f <- getJSON
+    f <- readBSlazy  "tutorial1.json"
     let r = decode f  :: Maybe [Person]
     putIOwords ["decoded", showT r]
     return ()
@@ -34,22 +34,26 @@ tutorial1Main = do
 --encode :: ToJSON a => a -> ByteString
 --eitherDecode :: FromJSON a => ByteString -> Either String a
 
+decodePerson :: B.ByteString -> Maybe [Person]
+decodePerson = decode
+
 data Person =
   Person { firstName  :: !Text
          , lastName   :: !Text
          , age        :: Int
          , likesPizza :: Bool
-           } deriving (Show,Generic)
+           } deriving (Show, Generic, Eq)
 
 instance FromJSON Person
 instance ToJSON Person
 
 
-jsonFile :: FilePath
-jsonFile = "tutorial1.json"
+--jsonFile :: FilePath
+--jsonFile = "tutorial1.json"
+--
+readBSlazy :: FilePath ->  IO B.ByteString
+readBSlazy  =  B.readFile
 
-getJSON :: IO B.ByteString
-getJSON = B.readFile jsonFile
 
 
 

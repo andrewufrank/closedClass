@@ -69,6 +69,7 @@ Test-Suite TestAuto
     build-depends: base, HTF
             , testExample >=0.0.2
             , uniform-strings
+        , bytestring
 --        , safe
         -- , test-framework
 --        , test-invariant
