@@ -98,13 +98,13 @@ instance FromJSON Token1 where
     parseJSON = genericParseJSON defaultOptions {
                 fieldLabelModifier = drop 4 }
 
-data CorefChain1 = CorefChain1 {chain_corefs :: [Coref1]
+data CorefChain1 = CorefChain1 {chain :: [Coref1]
                 } deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON CorefChain1 where
     parseJSON =   genericParseJSON opts . jsonLower
         where
-          opts = defaultOptions { fieldLabelModifier =  drop 6 }
+          opts = defaultOptions -- { fieldLabelModifier =  drop 6 }
 
 -- | Turn all keys in a JSON object to "chain"
 jsonLower :: Value -> Value
