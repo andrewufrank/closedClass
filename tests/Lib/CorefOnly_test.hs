@@ -18,17 +18,15 @@ module Lib.CorefOnly_test  -- (openMain, htf_thisModuelsTests)
 import           Test.Framework
 import           Uniform.Strings
 import Uniform.FileIO
---import qualified Data.ByteString.Lazy as B
+import qualified Data.ByteString.Lazy.UTF8 as B
 import Data.Aeson (eitherDecode)
 
 import Lib.CorefOnly
 
--- show produces the "xx"
+
 test_coref = do
     res0 <- runErr $ do
         let fn = makeRelFile "coref.json"
---             "coref2.json"
-                -- coref1.json manually replaced to "chain"
         putIOwords ["nlp json decode:", showT fn]
         f <- readFile2  fn
         putIOwords ["json input:", take' 100 . showT $ f]
@@ -36,10 +34,23 @@ test_coref = do
         putIOwords ["decoded:", showT r]
         runErrorFromEither r
 --        return r
-    assertEqual res (show res0)
+    assertEqual resCoref (show res0)
 
-res =  "Right (Coref1 {coref_id = 3, coref_text = \"he\", coref_headIndex = 9, coref_sentNum = 1, coref_isRepresentativeMention = False})"
+resCoref =  "Right (Coref1 {coref_id = 3, coref_text = \"he\", coref_headIndex = 9, coref_sentNum = 1, coref_isRepresentativeMention = False})"
 
+test_chain = do
+    res0 <- runErr $ do
+        let fn = makeRelFile "chain.json"
+        putIOwords ["nlp json decode:", showT fn]
+        f <- readFile2  fn
+        putIOwords ["json input:", s2t . take 100 . B.toString $ f]
+        let r = eitherDecode  f  :: Either String CorefChain1
+        putIOwords ["decoded:", showT r]
+        runErrorFromEither r
+--        return r
+    assertEqual resChain (show res0)
+
+resChain =  "Right (CorefChain1 {chain = [Coref1 {coref_id = 1, coref_text = \"the uncle\", coref_headIndex = 3, coref_sentNum = 1, coref_isRepresentativeMention = True},Coref1 {coref_id = 3, coref_text = \"he\", coref_headIndex = 9, coref_sentNum = 1, coref_isRepresentativeMention = False}]})"
 
 
 ---- show produces the "xx"

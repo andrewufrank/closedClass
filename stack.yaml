@@ -1,4 +1,4 @@
-flags: {}
+stack flags: {}
 extra-package-dbs: []
 packages:
 - .
