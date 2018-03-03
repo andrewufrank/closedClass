@@ -25,18 +25,18 @@ import GHC.Generics
 import Control.Monad (mzero)
 import qualified Data.HashMap.Strict as HM
 
-parseNLP :: ErrIO ()
-parseNLP = do
-    f :: LazyByteString <- readFile2 (makeRelFile "short1 .json")
-    let r = decodeDoc1 f -- :: Maybe [Doc1]
-    putIOwords ["decoded", showT r]
-    return ()
+--parseNLP :: ErrIO ()
+--parseNLP = do
+--    f :: LazyByteString <- readFile2 (makeRelFile "short1 .json")
+--    let r = decodeDoc1 f -- :: Maybe [Doc1]
+--    putIOwords ["decoded", showT r]
+--    return ()
 
-decodeDoc1 :: LazyByteString -> Maybe Doc1
-decodeDoc1 = decode
+decodeDoc1 :: LazyByteString -> Either String Doc1
+decodeDoc1 = eitherDecode
 
 data Doc1 = Doc1 {doc_sentences::  [Sentence1]
-                  , doc_corefs :: CorefChain1 -- Coreferences0 -- [CorefChain1]
+                  , doc_corefs :: Coreferences1-- [CorefChain1]
                        } deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON Doc1 where
@@ -98,25 +98,28 @@ instance FromJSON Token1 where
     parseJSON = genericParseJSON defaultOptions {
                 fieldLabelModifier = drop 4 }
 
---data Coreferences0 = Coreferences0 {corefs :: CorefChain1
---                } deriving (Read, Show,  Eq, Ord, Generic)
---
---instance FromJSON Coreferences0 where
+data Coreferences1 = Coreferences1 -- [CorefChain1]
+        {chains:: [CorefChain1]                }
+                 deriving (Read, Show,  Eq, Ord, Generic)
+
+instance FromJSON Coreferences1 where
+    parseJSON =   genericParseJSON opts  . jsonToArray
+        where
+          opts = defaultOptions
+
+---- convert fields into array -- applied before the parse of Coreferences1
+jsonToArray :: Value -> Value
+--jsonToArray = id
+jsonToArray (Object vals) = -- error . show $
+    object ["chains" .= (fmap snd . HM.toList $ vals) ]
+jsonToArray x = x
 
 
-data CorefChain1 = CorefChain1 {chain :: [Coref1]
-                } deriving (Read, Show,  Eq, Ord, Generic)
+data CorefChain1 = CorefChain1 [Coref1] -- {chain:: [Coref1]  }
+                 deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON CorefChain1 where
-    parseJSON =   genericParseJSON opts . jsonLower
-        where
-          opts = defaultOptions -- { fieldLabelModifier =  drop 6 }
 
--- | Turn all keys in a JSON object to "chain"
-jsonLower :: Value -> Value
-jsonLower (Object o) = Object . HM.fromList . map lowerPair . HM.toList $ o
-  where lowerPair (key, val) = ("chain", val)
-jsonLower x = x
 
 data Coref1 = Coref1 {coref_id :: Int
                     , coref_text :: Text
@@ -126,8 +129,8 @@ data Coref1 = Coref1 {coref_id :: Int
 --                    , coref_animacy :: Text
 --                    , coref_startIndex :: Int
 --                    , coref_endIndex :: Int
-                    , coref_headIndex :: Int
-                    , coref_sentNum :: Int
+--                    , coref_headIndex :: Int
+--                    , coref_sentNum :: Int
 --                    , coref_position :: [Int]
                     , coref_isRepresentativeMention :: Bool
                 } deriving (Read, Show,  Eq, Ord, Generic)
