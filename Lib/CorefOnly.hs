@@ -49,6 +49,20 @@ jsonToArray (Object vals) = error . show $  Object $ fromList [
 
 jsonToArray x = x
 
+data CoreferencesEdited = CoreferencesEdited {e_corefs :: Coreferences1
+                } deriving (Read, Show,  Eq, Ord, Generic)
+
+instance FromJSON CoreferencesEdited where
+    parseJSON =   genericParseJSON opts
+        where
+          opts = defaultOptions  { fieldLabelModifier =  drop 2 }
+
+data Coreferences1 = Coreferences1 {chains:: [CorefChain1]
+                    }
+                 deriving (Read, Show,  Eq, Ord, Generic)
+
+instance FromJSON Coreferences1 where
+
 
 data CorefChain1 = CorefChain1 {chain:: [Coref1]
                     }
@@ -65,8 +79,8 @@ data Coref1 = Coref1 {coref_id :: Int
 --                    , coref_animacy :: Text
 --                    , coref_startIndex :: Int
 --                    , coref_endIndex :: Int
-                    , coref_headIndex :: Int
-                    , coref_sentNum :: Int
+--                    , coref_headIndex :: Int
+--                    , coref_sentNum :: Int
 --                    , coref_position :: [Int]
                     , coref_isRepresentativeMention :: Bool
                 } deriving (Read, Show,  Eq, Ord, Generic)

@@ -1,0 +1,39 @@
+{
+	"corefs": {
+		"chains": [{
+				"chain": [{
+						"id": 1,
+						"text": "the uncle",
+						"isRepresentativeMention": true
+					},
+					{
+						"id": 3,
+						"text": "he",
+						"isRepresentativeMention": false
+					}
+				]
+			},
+
+			{
+				"chain": [{
+						"id": 2,
+						"text": "the room",
+						"isRepresentativeMention": true
+					},
+					{
+						"id": 5,
+						"text": "It",
+						"isRepresentativeMention": false
+					}
+				]
+			},
+			{
+				"chain": [{
+					"id": 4,
+					"text": "a book",
+					"isRepresentativeMention": true
+				}]
+			}
+		]
+	}
+}
