@@ -49,9 +49,9 @@ doc1ops = defaultOptions {
 
 data Sentence1 = Sentence1 {s_index :: Int
                         , s_parse :: Text  -- the parse tree
-                        , s_basicDependencies :: [Dependency1]
-                        , s_enhancedDependencies :: [Dependency1]
-                        , s_enhancedPlusPlusDependencies :: [Dependency1]
+                        , s_basicDependencies :: Maybe [Dependency1]
+                        , s_enhancedDependencies :: Maybe [Dependency1]
+                        , s_enhancedPlusPlusDependencies :: Maybe [Dependency1]
                         , s_entitymentions :: [Ner1]
                         , s_tokens :: [Token1]
                         } deriving (Read, Show,  Eq, Ord, Generic)
@@ -92,7 +92,7 @@ data Token1 = Token1 {tok_index :: Int
                 , tok_characterOffsetBegin :: Int
                 , tok_characterOffsetEnd :: Int
                 , tok_pos :: Text
-                , tok_ner :: Text
+                , tok_ner :: Text  -- missing NormalizedNER ?
                 , tok_speaker :: Text
                 , tok_before :: Text
                 , tok_after :: Text
@@ -130,10 +130,10 @@ data Coref1 = Coref1 {coref_id :: Int
 --                    , coref_number :: Text
 --                    , coref_gender :: Text
 --                    , coref_animacy :: Text
---                    , coref_startIndex :: Int
---                    , coref_endIndex :: Int
---                    , coref_headIndex :: Int
---                    , coref_sentNum :: Int
+                    , coref_startIndex :: Int
+                    , coref_endIndex :: Int
+                    , coref_headIndex :: Int
+                    , coref_sentNum :: Int
 --                    , coref_position :: [Int]
                     , coref_isRepresentativeMention :: Bool
                 } deriving (Read, Show,  Eq, Ord, Generic)

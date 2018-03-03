@@ -8,9 +8,11 @@
 {-# LANGUAGE ScopedTypeVariables   #-}
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
-{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE OverloadedStrings
+    , RecordWildCards     #-}
 
-{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
+--{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
+
 --{-# LANGUAGE TemplateHaskell #-}
 -- template haskell requires reordering of data types
 --and all functions used for default otions imported (not local defined)
@@ -19,127 +21,110 @@ module Lib.Doc1ToDoc0 -- (openMain, htf_thisModuelsTests)
      where
 
 import           Uniform.Strings
-import Uniform.FileIO
-
-import Data.Aeson
-import Data.Aeson.Types  -- for modifying the labels
-import GHC.Generics
---import qualified Data.ByteString.Lazy as B
-import Control.Monad (mzero)
-import qualified Data.HashMap.Strict as HM
-
+--import Uniform.FileIO
+import CoreNLP.Defs0
+import Lib.ParseJsonCoreNLP
+import qualified NLP.Types.Tags      as NLP
+--import qualified NLP.Corpora.Conll  as Conll
+--import qualified NLP.Corpora.UD  as UD
+--            Uniform.FileIO
+--import              LitNLP.Tools
+import              CoreNLP.DEPcodes
+import              CoreNLP.NERcodes
+import Uniform.Zero
 --parseNLP :: ErrIO ()
---parseNLP = do
---    f :: LazyByteString <- readFile2 (makeRelFile "short1 .json")
---    let r = decodeDoc1 f -- :: Maybe [Doc1]
---    putIOwords ["decoded", showT r]
---    return ()
-
-decodeDoc1 :: LazyByteString -> Either String Doc1
-decodeDoc1 = eitherDecode
-
-data Doc1 = Doc1 {doc_sentences::  [Sentence1]
-                  , doc_corefs :: Coreferences1-- [CorefChain1]
-                       } deriving (Read, Show,  Eq, Ord, Generic)
-
-instance FromJSON Doc1 where
-    parseJSON = genericParseJSON doc1ops
-doc1ops = defaultOptions {
-                fieldLabelModifier = drop 4 }
-
-data Sentence1 = Sentence1 {s_index :: Int
-                        , s_parse :: Text  -- the parse tree
-                        , s_basicDependencies :: [Dependency1]
-                        , s_enhancedDependencies :: [Dependency1]
-                        , s_enhancedPlusPlusDependencies :: [Dependency1]
-                        , s_entitymentions :: [Ner1]
-                        , s_tokens :: [Token1]
-                        } deriving (Read, Show,  Eq, Ord, Generic)
-
-instance FromJSON Sentence1 where
-    parseJSON = genericParseJSON defaultOptions {
-                fieldLabelModifier = drop 2 }
-
-data Dependency1 = Dependency1 {dep_dep ::  Text -- the tag
-                        , dep_governor :: Int
-                        , dep_governorGloss :: Text
-                        , dep_dependent :: Int
-                        , dep_dependentGloss :: Text
-                        } deriving (Read, Show,  Eq, Ord, Generic)
-
-instance FromJSON Dependency1 where
-    parseJSON = genericParseJSON defaultOptions {
-                fieldLabelModifier = drop 4 }
-
-data Ner1 = Ner1 {ner_docTokenBegin :: Int
-                , ner_docTokenEnd :: Int
-                , ner_tokenBegin :: Int
-                , ner_tokenEnd :: Int
-                , ner_text :: Text
-                , ner_characterOffsetBegin :: Int
-                , ner_characterOffsetEnd :: Int
-                , ner_ner :: Text -- the code
-                } deriving (Read, Show,  Eq, Ord, Generic)
-
-instance FromJSON Ner1 where
-    parseJSON = genericParseJSON defaultOptions {
-                fieldLabelModifier = drop 4 }
-
-data Token1 = Token1 {tok_index :: Int
-                , tok_word :: Text
-                , tok_originalText :: Text
-                , tok_lemma :: Text
-                , tok_characterOffsetBegin :: Int
-                , tok_characterOffsetEnd :: Int
-                , tok_pos :: Text
-                , tok_ner :: Text
-                , tok_speaker :: Text
-                , tok_before :: Text
-                , tok_after :: Text
-                } deriving (Read, Show,  Eq, Ord, Generic)
-
-instance FromJSON Token1 where
-    parseJSON = genericParseJSON defaultOptions {
-                fieldLabelModifier = drop 4 }
-
-data Coreferences1 = Coreferences1  {chains:: [CorefChain1] }
-                 deriving (Read, Show,  Eq, Ord, Generic)
-
-instance FromJSON Coreferences1 where
-    parseJSON =   genericParseJSON opts  . jsonToArray
-        where
-          opts = defaultOptions
-
----- convert fields into array -- applied before the parse of Coreferences1
-jsonToArray :: Value -> Value
---jsonToArray = id
-jsonToArray (Object vals) = -- error . show $
-    object ["chains" .= (fmap snd . HM.toList $ vals) ]
-jsonToArray x = x
 
 
-data CorefChain1 = CorefChain1 [Coref1]
-                 deriving (Read, Show,  Eq, Ord, Generic, FromJSON)
+token2to0 :: (NLP.POStags postag) => postag -> Token1 -> Token0 postag
+-- ^ convert a token2 dataset from JSON to Token0
+-- posTag phantom indicates the type of posTags to use
+token2to0 posPh (Token1 {..}) = Token0 {..}
+    where
+        tid = TokenID0  tok_index
+        tword = Wordform0 tok_word
+        tlemma = Lemma0 tok_lemma
+        tpos = (NLP.parseTag  tok_pos) `asTypeOf` posPh
+        tposOrig = tok_pos
+        tpostt = zero
+        tner = parseNERtagList [tok_ner] -- when is this a list?
+                        -- use the Ner1 values?
+        tspeaker = parseSpeakerTagList [tok_speaker]
+        tbegin = tok_characterOffsetBegin
+        tend = tok_characterOffsetEnd
 
---instance FromJSON CorefChain1 where
+coref1to0 :: Coref1 -> Mention0
+coref1to0 (Coref1 {..}) = Mention0 {..}
+    where
+        mentRep = coref_isRepresentativeMention
+        mentSent = SentID0 coref_sentNum
+        mentStart = TokenID0 coref_startIndex
+        mentEnd = TokenID0 coref_endIndex   -- points next word
+        mentHead = TokenID0 coref_headIndex
+        mentText = coref_text
 
+data Dependence01 = Dependence01 {d1type :: DepCode -- Text -- String
+                        , d1orig :: Text -- the value given in the XML
+                        , d1govid :: TokenID0
+                        , d1depid :: TokenID0
+                        , d1govGloss :: Text
+                        , d1depGloss :: Text
+                        }   deriving (Show, Read, Eq)
 
-data Coref1 = Coref1 {coref_id :: Int
-                    , coref_text :: Text
---                    , coref_type :: Text
---                    , coref_number :: Text
---                    , coref_gender :: Text
---                    , coref_animacy :: Text
---                    , coref_startIndex :: Int
---                    , coref_endIndex :: Int
---                    , coref_headIndex :: Int
---                    , coref_sentNum :: Int
---                    , coref_position :: [Int]
-                    , coref_isRepresentativeMention :: Bool
-                } deriving (Read, Show,  Eq, Ord, Generic)
+dependency1to0 :: Dependency1 -> Dependence01
+dependency1to0 Dependency1 {..} = Dependence01 {..}
+    where
+        d1type = parseDEPtag dep_dep :: DepCode
+        d1orig = dep_dep
+        d1govid = TokenID0 dep_governor
+        d1depid = TokenID0 dep_dependent
+        d1govGloss = dep_governorGloss
+        d1depGloss = dep_dependentGloss
 
-instance FromJSON Coref1 where
-    parseJSON =   genericParseJSON opts
-        where
-          opts = defaultOptions { fieldLabelModifier =  drop 6 }
+data Sentence01 postag = Sentence01 {s1id :: SentID0
+                        , s1parse :: Text  -- the parse tree
+                        , s1toks :: [Token0 postag]
+                        , s1deps :: Maybe [Dependence01]
+                        -- should be only one or none
+                        -- select (last = best) in coreNLPxml in getSentence
+                        -- could be changed to parse all and select later
+                        } deriving (Read, Show,  Eq)
+
+sentence1to0 :: (NLP.POStags postag) => postag -> Sentence1 -> Sentence01 postag
+sentence1to0 posPh Sentence1 {..} = Sentence01 {..}
+    where
+            s1id = SentID0 s_index
+            s1parse = s_parse
+            s1toks = map (token2to0 posPh)  s_tokens
+            s1deps = case s_enhancedPlusPlusDependencies of
+                Just d1 -> Just $ map dependency1to0 d1
+                Nothing -> case s_enhancedDependencies of
+                    Just d2 -> Just $ map  dependency1to0 d2
+                    Nothing -> case s_basicDependencies of
+                        Just d3 -> Just $ map dependency1to0 d3
+                        Nothing -> Nothing
+
+data Doc01 postag = Doc01 {docSents:: [Sentence01 postag]
+                 , docCorefs :: Coreferences0   -- only one
+                       } deriving (Read, Show,  Eq)
+
+data Coreferences0 = Coreferences0 {coChains:: [MentionChain0]}
+                deriving (Read, Show,  Eq)
+
+coreferences1to0 :: Coreferences1 -> Coreferences0
+coreferences1to0 Coreferences1{..} = Coreferences0{..}
+    where
+        coChains = map corefChain1to0 chains
+
+data MentionChain0 = MentionChain0 [Mention0] deriving (Read, Show,  Eq)
+
+corefChain1to0 :: CorefChain1 -> MentionChain0
+corefChain1to0 (CorefChain1 cs) = MentionChain0 (map coref1to0 cs)
+
+doc1to01 ::(NLP.POStags postag) => postag -> Doc1 -> Doc01 postag
+doc1to01 posPh Doc1{..} = Doc01 {..}
+    where
+        docSents = map (sentence1to0 posPh) doc_sentences
+        docCorefs = coreferences1to0 doc_corefs
+                -- chains of mentions
+
 --
