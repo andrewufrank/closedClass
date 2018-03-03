@@ -36,7 +36,7 @@ decodeDoc1 :: LazyByteString -> Maybe Doc1
 decodeDoc1 = decode
 
 data Doc1 = Doc1 {doc_sentences::  [Sentence1]
-                  , doc_corefs :: [CorefChain1]
+                  , doc_corefs :: CorefChain1 -- Coreferences0 -- [CorefChain1]
                        } deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON Doc1 where
@@ -98,6 +98,12 @@ instance FromJSON Token1 where
     parseJSON = genericParseJSON defaultOptions {
                 fieldLabelModifier = drop 4 }
 
+--data Coreferences0 = Coreferences0 {corefs :: CorefChain1
+--                } deriving (Read, Show,  Eq, Ord, Generic)
+--
+--instance FromJSON Coreferences0 where
+
+
 data CorefChain1 = CorefChain1 {chain :: [Coref1]
                 } deriving (Read, Show,  Eq, Ord, Generic)
 
@@ -113,16 +119,16 @@ jsonLower (Object o) = Object . HM.fromList . map lowerPair . HM.toList $ o
 jsonLower x = x
 
 data Coref1 = Coref1 {coref_id :: Int
---                    , coref_text :: Text
---                    , coref_type :: Text
---                    , coref_number :: Text
---                    , coref_gender :: Text
---                    , coref_animacy :: Text
---                    , coref_startIndex :: Int
---                    , coref_endIndex :: Int
---                    , coref_headIndex :: Int
---                    , coref_sentNum :: Int
---                    , coref_position :: [Int]
+                    , coref_text :: Text
+                    , coref_type :: Text
+                    , coref_number :: Text
+                    , coref_gender :: Text
+                    , coref_animacy :: Text
+                    , coref_startIndex :: Int
+                    , coref_endIndex :: Int
+                    , coref_headIndex :: Int
+                    , coref_sentNum :: Int
+                    , coref_position :: [Int]
                     , coref_isRepresentativeMention :: Bool
                 } deriving (Read, Show,  Eq, Ord, Generic)
 
@@ -130,5 +136,4 @@ instance FromJSON Coref1 where
     parseJSON =   genericParseJSON opts
         where
           opts = defaultOptions { fieldLabelModifier =  drop 6 }
-
 --
