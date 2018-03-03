@@ -38,6 +38,7 @@ test_1 = do
         return r
     assertEqual res (show res0)
 
-res =  ""
+res =  "Right (Just (Coreferences0 {corefs = CorefChain1 {chain = [Coref1 {coref_id = 1, coref_text = \"the uncle\", coref_type = \"NOMINAL\", coref_number = \"SINGULAR\", coref_gender = \"MALE\", coref_animacy = \"ANIMATE\", coref_startIndex = 2, coref_endIndex = 4, coref_headIndex = 3, coref_sentNum = 1, coref_position = [1,1], coref_isRepresentativeMention = True},Coref1 {coref_id = 3, coref_text = \"he\", coref_type = \"PRONOMINAL\", coref_number = \"SINGULAR\", coref_gender = \"MALE\", coref_animacy = \"ANIMATE\", coref_startIndex = 9, coref_endIndex = 10, coref_headIndex = 9, coref_sentNum = 1, coref_position = [1,3], coref_isRepresentativeMention = False}]}}))"
+
 
 
