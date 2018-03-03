@@ -38,7 +38,25 @@ instance FromJSON Coreferences0 where
         where
           opts = defaultOptions  -- { fieldLabelModifier =  ("chain" ++) }
 
----- convert fields into array
+
+--data CoreferencesEdited = CoreferencesEdited {e_corefs :: Coreferences1
+--                } deriving (Read, Show,  Eq, Ord, Generic)
+--
+--instance FromJSON CoreferencesEdited where
+--    parseJSON =   genericParseJSON opts
+--        where
+--          opts = defaultOptions  { fieldLabelModifier =  drop 2 }
+
+data Coreferences1 = Coreferences1 [CorefChain1]
+--        {chains:: [CorefChain1]                }
+                 deriving (Read, Show,  Eq, Ord, Generic)
+
+instance FromJSON Coreferences1 where
+    parseJSON =   genericParseJSON opts  . jsonToArray --  jsonMapOp
+        where
+          opts = defaultOptions  -- { fieldLabelModifier =  ("chain" ++) }
+
+---- convert fields into array -- applied before the parse of Coreferences1
 jsonToArray :: Value -> Value
 --jsonToArray = id
 jsonToArray (Object vals) = -- error . show $
@@ -49,20 +67,6 @@ jsonToArray (Object vals) = -- error . show $
                     ) ]
 
 jsonToArray x = x
-
---data CoreferencesEdited = CoreferencesEdited {e_corefs :: Coreferences1
---                } deriving (Read, Show,  Eq, Ord, Generic)
---
---instance FromJSON CoreferencesEdited where
---    parseJSON =   genericParseJSON opts
---        where
---          opts = defaultOptions  { fieldLabelModifier =  drop 2 }
-
-data Coreferences1 = Coreferences1 {chains:: [CorefChain1]
-                    }
-                 deriving (Read, Show,  Eq, Ord, Generic)
-
-instance FromJSON Coreferences1 where
 
 
 data CorefChain1 = CorefChain1 {chain:: [Coref1]
