@@ -10,7 +10,7 @@
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE OverloadedStrings     #-}
 
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
 
 module Lib.ParseJsonCoreNLP -- (openMain, htf_thisModuelsTests)
      where
@@ -98,8 +98,7 @@ instance FromJSON Token1 where
     parseJSON = genericParseJSON defaultOptions {
                 fieldLabelModifier = drop 4 }
 
-data Coreferences1 = Coreferences1 -- [CorefChain1]
-        {chains:: [CorefChain1]                }
+data Coreferences1 = Coreferences1  {chains:: [CorefChain1] }
                  deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON Coreferences1 where
@@ -115,10 +114,10 @@ jsonToArray (Object vals) = -- error . show $
 jsonToArray x = x
 
 
-data CorefChain1 = CorefChain1 [Coref1] -- {chain:: [Coref1]  }
-                 deriving (Read, Show,  Eq, Ord, Generic)
+data CorefChain1 = CorefChain1 [Coref1]
+                 deriving (Read, Show,  Eq, Ord, Generic, FromJSON)
 
-instance FromJSON CorefChain1 where
+--instance FromJSON CorefChain1 where
 
 
 data Coref1 = Coref1 {coref_id :: Int
