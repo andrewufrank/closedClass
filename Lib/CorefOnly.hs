@@ -47,8 +47,8 @@ instance FromJSON Coreferences0 where
 --        where
 --          opts = defaultOptions  { fieldLabelModifier =  drop 2 }
 
-data Coreferences1 = Coreferences1 [CorefChain1]
---        {chains:: [CorefChain1]                }
+data Coreferences1 = Coreferences1 -- [CorefChain1]
+        {chains:: [CorefChain1]                }
                  deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON Coreferences1 where
