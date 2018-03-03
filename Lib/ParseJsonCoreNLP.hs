@@ -27,33 +27,33 @@ import Control.Monad (mzero)
 parseNLP :: ErrIO ()
 parseNLP = do
     f :: LazyByteString <- readFile2 (makeRelFile "short1 .json")
-    let r = decode f  :: Maybe [Doc1]
+    let r = decodeDoc1 f -- :: Maybe [Doc1]
     putIOwords ["decoded", showT r]
     return ()
 
-decodeDoc1 :: LazyByteString -> Maybe [Doc1]
+decodeDoc1 :: LazyByteString -> Maybe Doc1
 decodeDoc1 = decode
 
-data Doc1 = Doc0 {doc_sents::  [Sentence1]
-                 , doc_corefs :: [CorefChain1]
+data Doc1 = Doc0 {sentences::  [Sentence1]
+--                 , doc_corefs :: [CorefChain1]
                        } deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON Doc1 where
-    parseJSON = genericParseJSON defaultOptions {
-                fieldLabelModifier = drop 4 }
+--    parseJSON = genericParseJSON defaultOptions {
+--                fieldLabelModifier = drop 4 }
 
-data Sentence1 = Sentence1 {s_index :: Int
-                        , s_parse :: Text  -- the parse tree
-                        , s_basicDependencies :: [Dependency1]
-                        , s_enhancedDependencies :: [Dependency1]
-                        , s_enhancedPlusPlusDependencies :: [Dependency1]
-                        , s_entitymentions :: [Ner1]
-                        , s_tokens :: [Token1]
+data Sentence1 = Sentence1 {index :: Int
+--                        , s_parse :: Text  -- the parse tree
+--                        , s_basicDependencies :: [Dependency1]
+--                        , s_enhancedDependencies :: [Dependency1]
+--                        , s_enhancedPlusPlusDependencies :: [Dependency1]
+--                        , s_entitymentions :: [Ner1]
+--                        , s_tokens :: [Token1]
                         } deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON Sentence1 where
-    parseJSON = genericParseJSON defaultOptions {
-                fieldLabelModifier = drop 2 }
+--    parseJSON = genericParseJSON defaultOptions {
+--                fieldLabelModifier = drop 2 }
 
 data Dependency1 = Dependency1 {dep_dep ::  Text -- the tag
                         , dep_governor :: Int

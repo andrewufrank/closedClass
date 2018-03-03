@@ -28,9 +28,12 @@ import Lib.ParseJsonCoreNLP
 -- show produces the "xx"
 test_1 = do
     res0 <- runErr $ do
-        f <- readFile2  (makeRelFile "short1.json")
+        let fn = makeRelFile "short1.json"
+        putIOwords ["nlp json decode:", showT fn]
+        f <- readFile2  fn
+        putIOwords ["json input:", take' 100 . showT $ f]
         let r = decodeDoc1 f  -- :: Maybe [Doc1]
-        putIOwords ["decoded", showT r]
+        putIOwords ["decoded:", showT r]
         return r
     assertEqual res (show res0)
 

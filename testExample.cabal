@@ -47,24 +47,24 @@ library
     default-language: Haskell2010
     hs-source-dirs: .
 
-executable main
-    main-is:    ClassMain.hs
-    build-depends: base, HTF
-        , testExample >=0.0.2
-        , uniform-strings
-        , uniform-convenience
---        , safe
---        -- , test-framework  -- clash with HTF
---        , test-invariant
---        , text
---        , snap-core
---        , network-uri
---        , bytestring
---        , quickcheck-text
-    default-language: Haskell2010
-    hs-source-dirs: src
-    other-modules:
---        StringConversion
+--executable main
+--    main-is:    ClassMain.hs
+--    build-depends: base, HTF
+--        , testExample >=0.0.2
+--        , uniform-strings
+--        , uniform-convenience
+----        , safe
+----        -- , test-framework  -- clash with HTF
+----        , test-invariant
+----        , text
+----        , snap-core
+----        , network-uri
+----        , bytestring
+----        , quickcheck-text
+--    default-language: Haskell2010
+--    hs-source-dirs: src
+--    other-modules:
+----        StringConversion
 
 Test-Suite TestAuto
     type:       exitcode-stdio-1.0

@@ -28,9 +28,12 @@ import Lib.Tutorial1
 -- show produces the "xx"
 test_1 = do
     res0 <- runErr $ do
-        f <- readFile2  (makeRelFile "tutorial1.json")
-        let r = decodePerson f -- :: Maybe [Person]
-        putIOwords ["decoded", showT r]
+        let fn = makeRelFile "tutorial1.json"
+        putIOwords ["tutorial json decode:", showT fn]
+        f <- readFile2  fn
+        putIOwords ["json input:", take' 100 . showT $ f]
+        let r = decodePerson f  -- :: Maybe [Doc1]
+        putIOwords ["decoded:", showT r]
         return r
     assertEqual res (show res0)
 

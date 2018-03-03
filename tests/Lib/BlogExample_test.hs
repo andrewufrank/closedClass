@@ -28,9 +28,12 @@ import Lib.BlogExample
 -- show produces the "xx"
 test_1 = do
     res0 <- runErr $ do
-        f <- readFile2  (makeRelFile "blog.json")
-        let r = decodeFlickrResponse f  -- :: Maybe [FlickrResponse]
-        putIOwords ["decoded", showT r]
+        let fn = makeRelFile "blog.json"
+        putIOwords ["blog json decode:", showT fn]
+        f <- readFile2  fn
+        putIOwords ["json input:", take' 100 . showT $ f]
+        let r = decodeFlickrResponse f  -- :: Maybe [Doc1]
+        putIOwords ["decoded:", showT r]
         return r
     assertEqual res (show res0)
 
