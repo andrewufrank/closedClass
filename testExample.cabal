@@ -41,6 +41,7 @@ library
          Lib.Tutorial1
          Lib.ParseJsonCoreNLP
          Lib.CorefOnly
+         Lib.CorefOnlyEdited
 --        StringConversion
     --     Uniform.Strings
     -- -- for testing, afterwards include in test-suite
@@ -76,6 +77,7 @@ Test-Suite TestAuto
          Lib.Tutorial1_test
          Lib.ParseJsonCoreNLP_test
          Lib.CorefOnly_test
+         Lib.CorefOnlyEdited_test
 
 
 --executable main

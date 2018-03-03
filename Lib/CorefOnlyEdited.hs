@@ -12,7 +12,7 @@
 
 {-# LANGUAGE DeriveGeneric #-}
 
-module Lib.CorefOnly -- (openMain, htf_thisModuelsTests)
+module Lib.CorefOnlyEdited -- (openMain, htf_thisModuelsTests)
      where
 
 import           Uniform.Strings
@@ -30,33 +30,32 @@ import GHC.Exts (fromList)
 decodeCoref :: LazyByteString -> Either String CorefChain1
 decodeCoref = eitherDecode
 
-data Coreferences0 = Coreferences0 {corefs :: Coreferences1
-                } deriving (Read, Show,  Eq, Ord, Generic)
-
-instance FromJSON Coreferences0 where
-    parseJSON =   genericParseJSON opts  -- . jsonToArray --  jsonMapOp
-        where
-          opts = defaultOptions  -- { fieldLabelModifier =  ("chain" ++) }
-
----- convert fields into array
-jsonToArray :: Value -> Value
---jsonToArray = id
-jsonToArray (Object vals) = -- error . show $
-    Object $ fromList [
-        ("chains",
-            Array . fromList
-                    . fmap snd . HM.toList $ vals
-                    ) ]
-
-jsonToArray x = x
-
---data CoreferencesEdited = CoreferencesEdited {e_corefs :: Coreferences1
+--data Coreferences0 = Coreferences0 {corefs :: [CorefChain1]
 --                } deriving (Read, Show,  Eq, Ord, Generic)
 --
---instance FromJSON CoreferencesEdited where
---    parseJSON =   genericParseJSON opts
+--instance FromJSON Coreferences0 where
+--    parseJSON =   genericParseJSON opts   . jsonToArray --  jsonMapOp
 --        where
---          opts = defaultOptions  { fieldLabelModifier =  drop 2 }
+--          opts = defaultOptions  -- { fieldLabelModifier =  ("chain" ++) }
+--
+------ convert fields into array
+--jsonToArray :: Value -> Value
+----jsonToArray = id
+--jsonToArray (Object vals) = error . show $  Object $ fromList [
+--        ("chain",
+--            Array . fromList
+--                    . fmap snd . HM.toList $ vals
+--                    ) ]
+--
+--jsonToArray x = x
+
+data CoreferencesEdited = CoreferencesEdited {e_corefs :: Coreferences1
+                } deriving (Read, Show,  Eq, Ord, Generic)
+
+instance FromJSON CoreferencesEdited where
+    parseJSON =   genericParseJSON opts
+        where
+          opts = defaultOptions  { fieldLabelModifier =  drop 2 }
 
 data Coreferences1 = Coreferences1 {chains:: [CorefChain1]
                     }
