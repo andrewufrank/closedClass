@@ -36,7 +36,8 @@ data Coreferences0 = Coreferences0 {corefs :: [CorefChain1]
 instance FromJSON Coreferences0 where
 
 
-data CorefChain1 = CorefChain1 {chain :: Coref1
+data CorefChain1 = CorefChain1 {chain:: [Coref1]
+                    }
                  deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON CorefChain1 where
@@ -47,21 +48,13 @@ instance FromJSON CorefChain1 where
 ---- convert fields into array
 jsonToArray :: Value -> Value
 --jsonToArray = id
-jsonToArray = Array . fromList . jsonToArrayx
+jsonToArray (Object vals) = Object $ fromList [
+        ("chain",
+            Array . fromList
+                    . fmap snd . HM.toList $ vals
+                    ) ]
 
-
-----jsonToArray vals =  encode . Seq.fromList . map snd . HM.toList $ vals
---jsonToArray vals =  Ae.Array . map snd . HM.toList $ vals
-jsonToArrayx (Object vals) =   fmap snd . HM.toList $ (vals )  ::[Value]
-
--- | Turn all keys in a JSON object to "chain"
-jsonMapOp :: Value -> Value
-jsonMapOp (Object o) = Object . HM.fromList . map op . HM.toList $ o
-  where op :: (Text,t1) -> (Text,t1)
-        op (key, val) = (key, val)
---        key2 :: String -> String
---        key2 key = key -- "chain" ++ key :: String
-jsonMapOp x = x
+jsonToArray x = x
 
 data Coref1 = Coref1 {coref_id :: Int
                     , coref_text :: Text
