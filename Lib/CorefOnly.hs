@@ -21,11 +21,11 @@ import Uniform.FileIO
 import Data.Aeson as Ae
 import Data.Aeson.Types  -- for modifying the labels
 import GHC.Generics
---import qualified Data.ByteString.Lazy as B
 import Control.Monad (mzero)
 import qualified Data.HashMap.Strict as HM
---import qualified Data.Sequence as Seq
 import GHC.Exts (fromList)
+--import qualified Data.ByteString.Lazy as B
+--import qualified Data.Sequence as Seq
 
 decodeCoref :: LazyByteString -> Either String CorefChain1
 decodeCoref = eitherDecode
@@ -34,38 +34,24 @@ data Coreferences0 = Coreferences0 {corefs :: Coreferences1
                 } deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON Coreferences0 where
-    parseJSON =   genericParseJSON opts  -- . jsonToArray --  jsonMapOp
+    parseJSON =   genericParseJSON opts
         where
-          opts = defaultOptions  -- { fieldLabelModifier =  ("chain" ++) }
-
-
---data CoreferencesEdited = CoreferencesEdited {e_corefs :: Coreferences1
---                } deriving (Read, Show,  Eq, Ord, Generic)
---
---instance FromJSON CoreferencesEdited where
---    parseJSON =   genericParseJSON opts
---        where
---          opts = defaultOptions  { fieldLabelModifier =  drop 2 }
+          opts = defaultOptions
 
 data Coreferences1 = Coreferences1 -- [CorefChain1]
         {chains:: [CorefChain1]                }
                  deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON Coreferences1 where
-    parseJSON =   genericParseJSON opts  . jsonToArray --  jsonMapOp
+    parseJSON =   genericParseJSON opts  . jsonToArray -
         where
-          opts = defaultOptions  -- { fieldLabelModifier =  ("chain" ++) }
+          opts = defaultOptions
 
 ---- convert fields into array -- applied before the parse of Coreferences1
 jsonToArray :: Value -> Value
 --jsonToArray = id
 jsonToArray (Object vals) = -- error . show $
-    Object $ fromList [
-        ("chains",
-            Array . fromList
-                    . fmap snd . HM.toList $ vals
-                    ) ]
-
+    object ["chains" .= (fmap snd . HM.toList $ vals) ]
 jsonToArray x = x
 
 
