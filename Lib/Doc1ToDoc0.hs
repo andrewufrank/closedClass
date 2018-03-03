@@ -15,7 +15,7 @@
 -- template haskell requires reordering of data types
 --and all functions used for default otions imported (not local defined)
 
-module Lib.ParseJsonCoreNLP -- (openMain, htf_thisModuelsTests)
+module Lib.Doc1ToDoc0 -- (openMain, htf_thisModuelsTests)
      where
 
 import           Uniform.Strings
