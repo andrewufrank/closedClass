@@ -13,8 +13,8 @@ module Main     where      -- must have Main (main) or Main where
 import           Test.Framework
 --import {-@ HTF_TESTS @-} ClosedClass   -- pay attention to HTF_TESTS !
 --import {-@ HTF_TESTS @-} OpenClass   -- pay attention to HTF_TESTS !
-import {-@ HTF_TESTS @-} Lib.Tutorial1_test   -- pay attention to HTF_TESTS !
-import {-@ HTF_TESTS @-} Lib.BlogExample_test   -- pay attention to HTF_TESTS !
+--import {-@ HTF_TESTS @-} Lib.Tutorial1_test   -- pay attention to HTF_TESTS !
+--import {-@ HTF_TESTS @-} Lib.BlogExample_test   -- pay attention to HTF_TESTS !
 import {-@ HTF_TESTS @-} Lib.ParseJsonCoreNLP_test   -- pay attention to HTF_TESTS !
 
 -- main =  do  -- the local tests only
