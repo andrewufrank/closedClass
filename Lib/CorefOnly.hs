@@ -34,13 +34,6 @@ data Coreferences0 = Coreferences0 {corefs :: [CorefChain1]
                 } deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON Coreferences0 where
-
-
-data CorefChain1 = CorefChain1 {chain:: [Coref1]
-                    }
-                 deriving (Read, Show,  Eq, Ord, Generic)
-
-instance FromJSON CorefChain1 where
     parseJSON =   genericParseJSON opts   . jsonToArray --  jsonMapOp
         where
           opts = defaultOptions  -- { fieldLabelModifier =  ("chain" ++) }
@@ -48,13 +41,21 @@ instance FromJSON CorefChain1 where
 ---- convert fields into array
 jsonToArray :: Value -> Value
 --jsonToArray = id
-jsonToArray (Object vals) = Object $ fromList [
+jsonToArray (Object vals) = error . show $  Object $ fromList [
         ("chain",
             Array . fromList
                     . fmap snd . HM.toList $ vals
                     ) ]
 
 jsonToArray x = x
+
+
+data CorefChain1 = CorefChain1 {chain:: [Coref1]
+                    }
+                 deriving (Read, Show,  Eq, Ord, Generic)
+
+instance FromJSON CorefChain1 where
+
 
 data Coref1 = Coref1 {coref_id :: Int
                     , coref_text :: Text

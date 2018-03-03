@@ -67,6 +67,7 @@ Test-Suite TestAuto
 --        , network-uri
 --        , bytestring
 --        , quickcheck-text
+            , aeson
     default-language: Haskell2010
     hs-source-dirs: tests
     other-modules:
