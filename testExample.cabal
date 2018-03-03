@@ -33,6 +33,7 @@ library
         , uniform-fileio
         , aeson
         , unordered-containers
+        , containers
 
     exposed-modules:
 --         ClosedClass

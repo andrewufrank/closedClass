@@ -120,15 +120,15 @@ jsonLower x = x
 
 data Coref1 = Coref1 {coref_id :: Int
                     , coref_text :: Text
-                    , coref_type :: Text
-                    , coref_number :: Text
-                    , coref_gender :: Text
-                    , coref_animacy :: Text
-                    , coref_startIndex :: Int
-                    , coref_endIndex :: Int
+--                    , coref_type :: Text
+--                    , coref_number :: Text
+--                    , coref_gender :: Text
+--                    , coref_animacy :: Text
+--                    , coref_startIndex :: Int
+--                    , coref_endIndex :: Int
                     , coref_headIndex :: Int
                     , coref_sentNum :: Int
-                    , coref_position :: [Int]
+--                    , coref_position :: [Int]
                     , coref_isRepresentativeMention :: Bool
                 } deriving (Read, Show,  Eq, Ord, Generic)
 
