@@ -55,7 +55,7 @@ showStartJson = s2t . take 100 . B.toString
 --resChain =  "Right (CorefChain1 {chain = [Coref1 {coref_id = 1, coref_text = \"the uncle\", coref_isRepresentativeMention = True},Coref1 {coref_id = 3, coref_text = \"he\", coref_isRepresentativeMention = False}]})"
 
 
-test_corefsEdited = do
+test_corefsPretty = do
     res0 <- runErr $ do
         let fn = makeRelFile "coreforigPretty.json"
         putIOwords ["nlp json decode:", showT fn]
@@ -65,9 +65,31 @@ test_corefsEdited = do
         putIOwords ["decoded:", showT r]
         runErrorFromEither r
 --        return r
-    assertEqual resCorefE (show res0)
+    assertEqual resCorefPretty (show res0)
 
-resCorefE =  ""
+resCorefPretty =   "Right (Coreferences0 {corefs = Coreferences1 {chains = [\
+    \CorefChain1 [\
+        \Coref1 {coref_id = 1, coref_text = \"the uncle\", coref_isRepresentativeMention = True},\
+        \Coref1 {coref_id = 3, coref_text = \"he\", coref_isRepresentativeMention = False}],\
+    \CorefChain1 [Coref1 {coref_id = 4, coref_text = \"a book\", \
+        \coref_isRepresentativeMention = True}],\
+    \CorefChain1 [Coref1 {coref_id = 2, coref_text = \"the room\", \
+        \coref_isRepresentativeMention = True},\
+        \Coref1 {coref_id = 5, coref_text = \"It\", coref_isRepresentativeMention = False}]]}})"
+
+test_corefs  = do
+    res0 <- runErr $ do
+        let fn = makeRelFile "coreforig.json"
+        putIOwords ["nlp json decode:", showT fn]
+        f <- readFile2  fn
+        putIOwords ["json input:",showStartJson f]
+        let r = eitherDecode  f  :: Either String Coreferences0
+        putIOwords ["decoded:", showT r]
+        runErrorFromEither r
+--        return r
+    assertEqual resCoref (show res0)
+
+resCoref =   "Right (Coreferences0 {corefs = Coreferences1 {chains = [CorefChain1 [Coref1 {coref_id = 1, coref_text = \"the uncle\", coref_isRepresentativeMention = True},Coref1 {coref_id = 3, coref_text = \"he\", coref_isRepresentativeMention = False}],CorefChain1 [Coref1 {coref_id = 4, coref_text = \"a book\", coref_isRepresentativeMention = True}],CorefChain1 [Coref1 {coref_id = 2, coref_text = \"the room\", coref_isRepresentativeMention = True},Coref1 {coref_id = 5, coref_text = \"It\", coref_isRepresentativeMention = False}]]}})"
 
 ---- show produces the "xx"
 --test_1 = do

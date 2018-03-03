@@ -69,8 +69,7 @@ jsonToArray (Object vals) = -- error . show $
 jsonToArray x = x
 
 
-data CorefChain1 = CorefChain1 {chain:: [Coref1]
-                    }
+data CorefChain1 = CorefChain1 [Coref1] -- {chain:: [Coref1]  }
                  deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON CorefChain1 where
