@@ -11,13 +11,13 @@ module Main     where      -- must have Main (main) or Main where
 --import System.Exit
 
 import           Test.Framework
---import {-@ HTF_TESTS @-} ClosedClass   -- pay attention to HTF_TESTS !
---import {-@ HTF_TESTS @-} OpenClass   -- pay attention to HTF_TESTS !
---import {-@ HTF_TESTS @-} Lib.Tutorial1_test   -- pay attention to HTF_TESTS !
---import {-@ HTF_TESTS @-} Lib.BlogExample_test   -- pay attention to HTF_TESTS !
---import {-@ HTF_TESTS @-} Lib.ParseJsonCoreNLP_test   -- pay attention to HTF_TESTS !
---import {-@ HTF_TESTS @-} Lib.CorefOnlyEdited_test    -- pay attention to HTF_TESTS !
-import {-@ HTF_TESTS @-} Lib.CorefOnly_test    -- pay attention to HTF_TESTS !
+--import {-@ HTF_TESTS @-} ClosedClass
+--import {-@ HTF_TESTS @-} OpenClass
+--import {-@ HTF_TESTS @-} Lib.Tutorial1_test
+--import {-@ HTF_TESTS @-} Lib.BlogExample_test
+import {-@ HTF_TESTS @-} Lib.ParseJsonCoreNLP_test
+--import {-@ HTF_TESTS @-} Lib.CorefOnlyEdited_test
+--import {-@ HTF_TESTS @-} Lib.CorefOnly_test
 
 -- main =  do  -- the local tests only
 --     putStrLn "HTF ExampleTest.hs:\n"

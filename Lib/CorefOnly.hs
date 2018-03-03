@@ -43,7 +43,7 @@ data Coreferences1 = Coreferences1 -- [CorefChain1]
                  deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON Coreferences1 where
-    parseJSON =   genericParseJSON opts  . jsonToArray -
+    parseJSON =   genericParseJSON opts  . jsonToArray
         where
           opts = defaultOptions
 
