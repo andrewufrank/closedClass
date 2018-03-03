@@ -35,7 +35,7 @@ decodeDoc1 :: LazyByteString -> Maybe [Doc1]
 decodeDoc1 = decode
 
 data Doc1 = Doc0 {doc_sents::  [Sentence1]
-                 , doc_corefs :: [Coref1]
+                 , doc_corefs :: [CorefChain1]
                        } deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON Doc1 where
@@ -97,6 +97,13 @@ instance FromJSON Token1 where
     parseJSON = genericParseJSON defaultOptions {
                 fieldLabelModifier = drop 4 }
 
+data CorefChain1 = CorefChain1 {corefs :: [Coref1]
+                } deriving (Read, Show,  Eq, Ord, Generic)
+
+instance FromJSON CorefChain1 where
+    parseJSON = genericParseJSON defaultOptions {
+                fieldLabelModifier = drop 6 }
+
 data Coref1 = Coref1 {coref_id :: Int
                     , coref_text :: Text
                     , coref_type :: Text
@@ -107,7 +114,8 @@ data Coref1 = Coref1 {coref_id :: Int
                     , coref_endIndex :: Int
                     , coref_headIndex :: Int
                     , coref_sentNum :: Int
-                    , coref_position :: Int
+                    , coref_position :: [Int]
+                    , coref_isRepresentativeMention :: Bool
                 } deriving (Read, Show,  Eq, Ord, Generic)
 
 instance FromJSON Coref1 where
