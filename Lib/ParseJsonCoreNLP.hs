@@ -28,50 +28,52 @@ import GHC.Generics
 import Control.Monad (mzero)
 import qualified Data.HashMap.Strict as HM
 
+-- all data has 2 suffix
+
 --parseNLP :: ErrIO ()
 --parseNLP = do
 --    f :: LazyByteString <- readFile2 (makeRelFile "short1 .json")
---    let r = decodeDoc1 f -- :: Maybe [Doc1]
+--    let r = decodeDoc2 f -- :: Maybe [Doc2]
 --    putIOwords ["decoded", showT r]
 --    return ()
 
-decodeDoc1 :: LazyByteString -> Either String Doc1
-decodeDoc1 = eitherDecode
+decodeDoc2 :: LazyByteString -> Either String Doc2
+decodeDoc2 = eitherDecode
 
-data Doc1 = Doc1 {doc_sentences::  [Sentence1]
-                  , doc_corefs :: Coreferences1-- [CorefChain1]
+data Doc2 = Doc2 {doc_sentences::  [Sentence2]
+                  , doc_corefs :: Coreferences2-- [CorefChain2]
                        } deriving (Read, Show,  Eq, Ord, Generic)
 
-instance FromJSON Doc1 where
-    parseJSON = genericParseJSON doc1ops
-doc1ops = defaultOptions {
+instance FromJSON Doc2 where
+    parseJSON = genericParseJSON doc2ops
+doc2ops = defaultOptions {
                 fieldLabelModifier = drop 4 }
 
-data Sentence1 = Sentence1 {s_index :: Int
+data Sentence2 = Sentence2 {s_index :: Int
                         , s_parse :: Text  -- the parse tree
-                        , s_basicDependencies :: Maybe [Dependency1]
-                        , s_enhancedDependencies :: Maybe [Dependency1]
-                        , s_enhancedPlusPlusDependencies :: Maybe [Dependency1]
-                        , s_entitymentions :: [Ner1]
-                        , s_tokens :: [Token1]
+                        , s_basicDependencies :: Maybe [Dependency2]
+                        , s_enhancedDependencies :: Maybe [Dependency2]
+                        , s_enhancedPlusPlusDependencies :: Maybe [Dependency2]
+                        , s_entitymentions :: [Ner2]
+                        , s_tokens :: [Token2]
                         } deriving (Read, Show,  Eq, Ord, Generic)
 
-instance FromJSON Sentence1 where
+instance FromJSON Sentence2 where
     parseJSON = genericParseJSON defaultOptions {
                 fieldLabelModifier = drop 2 }
 
-data Dependency1 = Dependency1 {dep_dep ::  Text -- the tag
+data Dependency2 = Dependency2 {dep_dep ::  Text -- the tag
                         , dep_governor :: Int
                         , dep_governorGloss :: Text
                         , dep_dependent :: Int
                         , dep_dependentGloss :: Text
                         } deriving (Read, Show,  Eq, Ord, Generic)
 
-instance FromJSON Dependency1 where
+instance FromJSON Dependency2 where
     parseJSON = genericParseJSON defaultOptions {
                 fieldLabelModifier = drop 4 }
 
-data Ner1 = Ner1 {ner_docTokenBegin :: Int
+data Ner2 = Ner2 {ner_docTokenBegin :: Int
                 , ner_docTokenEnd :: Int
                 , ner_tokenBegin :: Int
                 , ner_tokenEnd :: Int
@@ -81,11 +83,11 @@ data Ner1 = Ner1 {ner_docTokenBegin :: Int
                 , ner_ner :: Text -- the code
                 } deriving (Read, Show,  Eq, Ord, Generic)
 
-instance FromJSON Ner1 where
+instance FromJSON Ner2 where
     parseJSON = genericParseJSON defaultOptions {
                 fieldLabelModifier = drop 4 }
 
-data Token1 = Token1 {tok_index :: Int
+data Token2 = Token2 {tok_index :: Int
                 , tok_word :: Text
                 , tok_originalText :: Text
                 , tok_lemma :: Text
@@ -98,19 +100,19 @@ data Token1 = Token1 {tok_index :: Int
                 , tok_after :: Text
                 } deriving (Read, Show,  Eq, Ord, Generic)
 
-instance FromJSON Token1 where
+instance FromJSON Token2 where
     parseJSON = genericParseJSON defaultOptions {
                 fieldLabelModifier = drop 4 }
 
-data Coreferences1 = Coreferences1  {chains:: [CorefChain1] }
+data Coreferences2 = Coreferences2  {chains:: [CorefChain2] }
                  deriving (Read, Show,  Eq, Ord, Generic)
 
-instance FromJSON Coreferences1 where
+instance FromJSON Coreferences2 where
     parseJSON =   genericParseJSON opts  . jsonToArray
         where
           opts = defaultOptions
 
----- convert fields into array -- applied before the parse of Coreferences1
+---- convert fields into array -- applied before the parse of Coreferences2
 jsonToArray :: Value -> Value
 --jsonToArray = id
 jsonToArray (Object vals) = -- error . show $
@@ -118,13 +120,13 @@ jsonToArray (Object vals) = -- error . show $
 jsonToArray x = x
 
 
-data CorefChain1 = CorefChain1 [Coref1]
+data CorefChain2 = CorefChain2 [Coref2]
                  deriving (Read, Show,  Eq, Ord, Generic, FromJSON)
 
---instance FromJSON CorefChain1 where
+--instance FromJSON CorefChain2 where
 
 
-data Coref1 = Coref1 {coref_id :: Int
+data Coref2 = Coref2 {coref_id :: Int
                     , coref_text :: Text
 --                    , coref_type :: Text
 --                    , coref_number :: Text
@@ -138,7 +140,7 @@ data Coref1 = Coref1 {coref_id :: Int
                     , coref_isRepresentativeMention :: Bool
                 } deriving (Read, Show,  Eq, Ord, Generic)
 
-instance FromJSON Coref1 where
+instance FromJSON Coref2 where
     parseJSON =   genericParseJSON opts
         where
           opts = defaultOptions { fieldLabelModifier =  drop 6 }

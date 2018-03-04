@@ -1,6 +1,9 @@
 -----------------------------------------------------------------------------
 --
--- Module      :  parsing the output of stanford corenlp 3.9. in json format
+-- Module      :  reformat the output from parsing
+--  stanford corenlp 3.9. in json format
+
+-- all data additional to Defs0 have 1 suffix
 -----------------------------------------------------------------------------
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE FlexibleInstances     #-}
@@ -35,10 +38,10 @@ import Uniform.Zero
 --parseNLP :: ErrIO ()
 
 
-token2to0 :: (NLP.POStags postag) => postag -> Token1 -> Token0 postag
+token2to0 :: (NLP.POStags postag) => postag -> Token2 -> Token0 postag
 -- ^ convert a token2 dataset from JSON to Token0
 -- posTag phantom indicates the type of posTags to use
-token2to0 posPh (Token1 {..}) = Token0 {..}
+token2to0 posPh (Token2 {..}) = Token0 {..}
     where
         tid = TokenID0  tok_index
         tword = Wordform0 tok_word
@@ -47,13 +50,13 @@ token2to0 posPh (Token1 {..}) = Token0 {..}
         tposOrig = tok_pos
         tpostt = zero
         tner = parseNERtagList [tok_ner] -- when is this a list?
-                        -- use the Ner1 values?
+                        -- use the Ner2 values?
         tspeaker = parseSpeakerTagList [tok_speaker]
         tbegin = tok_characterOffsetBegin
         tend = tok_characterOffsetEnd
 
-coref1to0 :: Coref1 -> Mention0
-coref1to0 (Coref1 {..}) = Mention0 {..}
+coref2to0 :: Coref2 -> Mention0
+coref2to0 (Coref2 {..}) = Mention0 {..}
     where
         mentRep = coref_isRepresentativeMention
         mentSent = SentID0 coref_sentNum
@@ -62,7 +65,7 @@ coref1to0 (Coref1 {..}) = Mention0 {..}
         mentHead = TokenID0 coref_headIndex
         mentText = coref_text
 
-data Dependence01 = Dependence01 {d1type :: DepCode -- Text -- String
+data Dependence1 = Dependence1 {d1type :: DepCode -- Text -- String
                         , d1orig :: Text -- the value given in the XML
                         , d1govid :: TokenID0
                         , d1depid :: TokenID0
@@ -70,8 +73,8 @@ data Dependence01 = Dependence01 {d1type :: DepCode -- Text -- String
                         , d1depGloss :: Text
                         }   deriving (Show, Read, Eq)
 
-dependency1to0 :: Dependency1 -> Dependence01
-dependency1to0 Dependency1 {..} = Dependence01 {..}
+dependency2to0 :: Dependency2 -> Dependence1
+dependency2to0 Dependency2 {..} = Dependence1 {..}
     where
         d1type = parseDEPtag dep_dep :: DepCode
         d1orig = dep_dep
@@ -80,51 +83,51 @@ dependency1to0 Dependency1 {..} = Dependence01 {..}
         d1govGloss = dep_governorGloss
         d1depGloss = dep_dependentGloss
 
-data Sentence01 postag = Sentence01 {s1id :: SentID0
+data Sentence1 postag = Sentence1 {s1id :: SentID0
                         , s1parse :: Text  -- the parse tree
                         , s1toks :: [Token0 postag]
-                        , s1deps :: Maybe [Dependence01]
+                        , s1deps :: Maybe [Dependence1]
                         -- should be only one or none
                         -- select (last = best) in coreNLPxml in getSentence
                         -- could be changed to parse all and select later
                         } deriving (Read, Show,  Eq)
 
-sentence1to0 :: (NLP.POStags postag) => postag -> Sentence1 -> Sentence01 postag
-sentence1to0 posPh Sentence1 {..} = Sentence01 {..}
+sentence2to0 :: (NLP.POStags postag) => postag -> Sentence2 -> Sentence1 postag
+sentence2to0 posPh Sentence2 {..} = Sentence1 {..}
     where
             s1id = SentID0 s_index
             s1parse = s_parse
             s1toks = map (token2to0 posPh)  s_tokens
             s1deps = case s_enhancedPlusPlusDependencies of
-                Just d1 -> Just $ map dependency1to0 d1
+                Just d1 -> Just $ map dependency2to0 d1
                 Nothing -> case s_enhancedDependencies of
-                    Just d2 -> Just $ map  dependency1to0 d2
+                    Just d2 -> Just $ map  dependency2to0 d2
                     Nothing -> case s_basicDependencies of
-                        Just d3 -> Just $ map dependency1to0 d3
+                        Just d3 -> Just $ map dependency2to0 d3
                         Nothing -> Nothing
 
-data Doc01 postag = Doc01 {docSents:: [Sentence01 postag]
+data Doc1 postag = Doc1 {docSents:: [Sentence1 postag]
                  , docCorefs :: Coreferences0   -- only one
                        } deriving (Read, Show,  Eq)
 
 data Coreferences0 = Coreferences0 {coChains:: [MentionChain0]}
                 deriving (Read, Show,  Eq)
 
-coreferences1to0 :: Coreferences1 -> Coreferences0
-coreferences1to0 Coreferences1{..} = Coreferences0{..}
+coreferences2to0 :: Coreferences2 -> Coreferences0
+coreferences2to0 Coreferences2{..} = Coreferences0{..}
     where
-        coChains = map corefChain1to0 chains
+        coChains = map corefChain2to0 chains
 
 data MentionChain0 = MentionChain0 [Mention0] deriving (Read, Show,  Eq)
 
-corefChain1to0 :: CorefChain1 -> MentionChain0
-corefChain1to0 (CorefChain1 cs) = MentionChain0 (map coref1to0 cs)
+corefChain2to0 :: CorefChain2 -> MentionChain0
+corefChain2to0 (CorefChain2 cs) = MentionChain0 (map coref2to0 cs)
 
-doc1to01 ::(NLP.POStags postag) => postag -> Doc1 -> Doc01 postag
-doc1to01 posPh Doc1{..} = Doc01 {..}
+doc2to1 ::(NLP.POStags postag) => postag -> Doc2 -> Doc1 postag
+doc2to1 posPh Doc2{..} = Doc1 {..}
     where
-        docSents = map (sentence1to0 posPh) doc_sentences
-        docCorefs = coreferences1to0 doc_corefs
+        docSents = map (sentence2to0 posPh) doc_sentences
+        docCorefs = coreferences2to0 doc_corefs
                 -- chains of mentions
 
 --
