@@ -20,7 +20,7 @@
 -- template haskell requires reordering of data types
 --and all functions used for default otions imported (not local defined)
 
-module Lib.Doc1ToDoc0 -- (openMain, htf_thisModuelsTests)
+module Lib.Doc2ToDoc0 -- (openMain, htf_thisModuelsTests)
      where
 
 import           Uniform.Strings
@@ -92,8 +92,10 @@ data Sentence1 postag = Sentence1 {s1id :: SentID0
                         -- could be changed to parse all and select later
                         } deriving (Read, Show,  Eq)
 
-sentence2to0 :: (NLP.POStags postag) => postag -> Sentence2 -> Sentence1 postag
-sentence2to0 posPh Sentence2 {..} = Sentence1 {..}
+sentence2to1 :: (NLP.POStags postag)
+    => postag -> Sentence2 -> Sentence1 postag
+
+sentence2to1 posPh Sentence2 {..} = Sentence1 {..}
     where
             s1id = SentID0 s_index
             s1parse = s_parse
@@ -126,7 +128,7 @@ corefChain2to0 (CorefChain2 cs) = MentionChain0 (map coref2to0 cs)
 doc2to1 ::(NLP.POStags postag) => postag -> Doc2 -> Doc1 postag
 doc2to1 posPh Doc2{..} = Doc1 {..}
     where
-        docSents = map (sentence2to0 posPh) doc_sentences
+        docSents = map (sentence2to1 posPh) doc_sentences
         docCorefs = coreferences2to0 doc_corefs
                 -- chains of mentions
 

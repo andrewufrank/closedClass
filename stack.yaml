@@ -1,28 +1,17 @@
 flags: {}
 extra-package-dbs: []
-stack flags: {}
 packages:
 - .
-- location: /home/frank/Workspace8/uniform/uniform-strings
-  extra-dep: true
-- location: /home/frank/Workspace8/uniform/uniform-fileio
-  extra-dep: true
-- location: /home/frank/Workspace8/uniform/uniform-algebras
-  extra-dep: true
-- location: /home/frank/Workspace8/uniform/uniform-http
-  extra-dep: true
-- location: /home/frank/Workspace8/uniform/uniform-error
-  extra-dep: true
-- location: /home/frank/Workspace8/uniform/uniform-convenience
-  extra-dep: true
-- location: /home/frank/Workspace8/LitTextWork/NLPservices
-  extra-dep: true
-- location: /home/frank/Workspace8/LitTextWork/LitFoundation
-  extra-dep: true
-- location: /home/frank/Workspace8/LitTextWork/rdf4hextension
-  extra-dep: true
-- location: /home/frank/Workspace8/TreeTagSets
-  extra-dep: true
+- /home/frank/Workspace8/LitTextWork/NLPservices
+- /home/frank/Workspace8/TreeTagSets
+- /home/frank/Workspace8/uniform/uniform-strings
+- /home/frank/Workspace8/uniform/uniform-fileio
+- /home/frank/Workspace8/uniform/uniform-algebras
+- /home/frank/Workspace8/uniform/uniform-http
+- /home/frank/Workspace8/uniform/uniform-error
+- /home/frank/Workspace8/uniform/uniform-convenience
+- /home/frank/Workspace8/LitTextWork/LitFoundation
+- /home/frank/Workspace8/LitTextWork/rdf4hextension
 extra-deps:
 - hgal-2.0.0.2
 - parsec-extra-0.2.0.0
