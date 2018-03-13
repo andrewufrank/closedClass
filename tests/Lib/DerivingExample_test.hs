@@ -1,8 +1,7 @@
------------------------------------------------------------------------------
---
+-------------------------------------------------------
 -- Module      :   a test for HTF framework
 -- insert {-@ HTF_TESTS @-} for each import
------------------------------------------------------------------------------
+-------------------------------------------------------
 {-# OPTIONS_GHC -F -pgmF htfpp #-}
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE FlexibleInstances     #-}
@@ -23,5 +22,5 @@ import Data.Text
 test_int = assertEqual 0 (zero::Int)
 test_a = assertEqual (Ax "" :: Ax) zero
 
---test_b = assertEqual (B1 0) zero
+test_b = assertEqual (B1 0) zero
 

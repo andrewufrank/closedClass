@@ -23,14 +23,21 @@ import           Test.Framework
 import Data.Text
 --import Uniform.Strings
 import GHC.Generics
-
+import Data.Monoid
 
 deriveTest :: IO ()
 deriveTest = return ()
 
-class  Zeros z where
+class   Zeros z where
     zero :: z
---    default zero :: _
+--    default zero :: (Generic z, Gzero (Rep z)) => z
+--    zero = gzero (from z)
+--
+--class Gzero f  where
+--    gzero :: f a -> a
+--instance Gzero U1 where
+--    gzero U1 = a
+
 --    zero = gzero
 --    isZero  :: Eq z =>  z -> Bool
 --    isZero z = zero == z
@@ -42,15 +49,16 @@ class  Zeros z where
     -- gives a difficult to track error, because the type is not known
 
 
+
 --class (Ones z) =>  Ones (f z) where
 --    one :: f z
 --    default one :: f z
 --    one = gone (from z1)
 --
---class GOnes f  where
---    gone :: f a -> ()
---instance GOnes U1 where
---    gone U1 = ()
+--class Gzero f  where
+--    gzero :: f a -> a
+--instance Gzero U1 where
+--    gzero U1 = a
 
 
 instance Zeros Char where zero = ' '

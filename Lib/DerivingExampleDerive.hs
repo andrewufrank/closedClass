@@ -28,6 +28,7 @@ import Data.Text
 import Lib.DerivingExample
 import GHC.Generics
 import Data.Generics.Text
+import Data.Monoid
 
 newtype Basis1 = Basis1 String deriving newtype (Show, Read, Eq, Ord, Generic, Zeros)
 --deriving instance Generic (Zeros Text) => Generic Basis1
@@ -43,7 +44,9 @@ newtype Ax = Ax Text
 
 data Bx = B1 Int
      deriving stock (Show, Read, Eq, Ord, Generic)  --not Zeros
-     -- anyclass works only for newtype
+--     deriving anyclass (Show, Read, Eq, Ord, Generic, Zeros)
+     -- anyclass gives no methods
+     -- stock works not for "my" classes
 
 --instance Generic (Bx) where
 --    type Rep (Bx) = RepBx
