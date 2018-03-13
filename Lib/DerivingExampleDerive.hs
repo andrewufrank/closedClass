@@ -12,7 +12,8 @@
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE OverloadedStrings     #-}
 
-{-# LANGUAGE DeriveGeneric, DeriveAnyClass
+{-# LANGUAGE DeriveGeneric
+    , DeriveAnyClass
 --    , GeneralizedNewtypeDeriving
      #-}
 module Lib.DerivingExampleDerive
@@ -28,7 +29,8 @@ newtype Basis1 = Basis1 Text deriving (Show, Read, Eq, Ord, Generic)
 
 instance Zeros Basis1 where zero = Basis1 zero
 
-newtype Token = Token {token:: Basis1} deriving (Show, Read, Eq, Ord, Generic, Zeros)
+newtype Token = Token {token:: Basis1} deriving (Show, Read, Eq, Ord, Generic)
 
+instance Zeros Token where zero = Token zero
 
 
