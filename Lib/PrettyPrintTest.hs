@@ -11,15 +11,16 @@
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE OverloadedStrings     #-}
-module OpenClass  -- (openMain, htf_thisModuelsTests)
+module PrettyPrintTest  -- (openMain, htf_thisModuelsTests)
      where
 
 
 import           Test.Framework
 import Uniform.Strings
+import Text.Show.Pretty
 
-openMain :: IO ()
-openMain = do
+prttyMain :: IO ()
+prttyMain = do
     return ()
 
 data Data1 = Data1 {s :: String}

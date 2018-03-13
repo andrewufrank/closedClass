@@ -11,10 +11,10 @@ module Main     where      -- must have Main (main) or Main where
 --import System.Exit
 
 import           ClosedClass
-import           OpenClass
+import           PrettyPrintTest
 
 main :: IO ()
 main =  do  -- with tests in other modules
-    closedMain
-    openMain
+--    closedMain
+    prttyMain
 
