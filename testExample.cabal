@@ -13,6 +13,7 @@ author: Andrew U. Frank
 library
     build-depends:
         base >=4.8 && <= 5
+        , text
 --        network-uri,
 --        monads-tf,
         , HTF
@@ -42,6 +43,7 @@ library
 
     exposed-modules:
             Lib.DerivingExample
+            Lib.DerivingExampleDerive
 --         ClosedClass
 --         Lib.BlogExample
 --         Lib.Tutorial1
