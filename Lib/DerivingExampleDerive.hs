@@ -6,6 +6,7 @@
 {-# OPTIONS_GHC -F -pgmF htfpp #-}
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE UndecidableInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables   #-}
 {-# LANGUAGE TypeFamilies          #-}
@@ -14,7 +15,9 @@
 
 {-# LANGUAGE DeriveGeneric
     , DeriveAnyClass
---    , GeneralizedNewtypeDeriving
+    , GeneralizedNewtypeDeriving
+    , DerivingStrategies
+    , StandaloneDeriving
      #-}
 module Lib.DerivingExampleDerive
     where
@@ -24,13 +27,30 @@ import           Test.Framework
 import Data.Text
 import Lib.DerivingExample
 import GHC.Generics
+import Data.Generics.Text
 
-newtype Basis1 = Basis1 Text deriving (Show, Read, Eq, Ord, Generic)
+newtype Basis1 = Basis1 String deriving newtype (Show, Read, Eq, Ord, Generic, Zeros)
+--deriving instance Generic (Zeros Text) => Generic Basis1
 
-instance Zeros Basis1 where zero = Basis1 zero
+--instance Zeros Basis1 where zero = Basis1 zero
 
-newtype Token = Token {token:: Basis1} deriving (Show, Read, Eq, Ord, Generic)
+newtype Token = Token {token:: Basis1} deriving newtype (Show, Read, Eq, Ord, Zeros)
 
-instance Zeros Token where zero = Token zero
+--instance Zeros Token where zero = Token zero
 
+newtype Ax = Ax Text
+     deriving newtype (Show, Read, Eq, Ord, Zeros)
+
+data Bx = B1 Int
+     deriving stock (Show, Read, Eq, Ord, Generic)  --not Zeros
+     -- anyclass works only for newtype
+
+--instance Generic (Bx) where
+--    type Rep (Bx) = RepBx
+--    from Bx = U1
+--    to U1 = Bx
+
+
+
+    --
 

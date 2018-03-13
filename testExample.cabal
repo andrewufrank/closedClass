@@ -21,25 +21,7 @@ library
 --        text, utf8-string,
         -- for testing
         , test-invariant
---        ,quickcheck-text
---        numeric-prelude,
---        snap-core,
---        safe,
---        vector,
---        -- fay-base,
---        split,
---        data-easy
-----        uniform-algebras
---        , uniform-strings
---        , uniform-fileio
---        , uniform-algebras
---        , aeson
---        , unordered-containers
---        , containers
---        , NLPservices
---        , TreeTagSets
---        , litFoundation
---        , rdf4h
+        , syb
 
     exposed-modules:
             Lib.DerivingExample
@@ -65,7 +47,8 @@ Test-Suite TestAuto
     type:       exitcode-stdio-1.0
     main-is:    ExampleTesting.hs
     build-depends: base, HTF
-            , testExample >=0.0.2
+            , testExample
+            , text
 --            , uniform-strings
 --            , uniform-fileio
 --            , uniform-convenience

@@ -17,7 +17,11 @@ module Lib.DerivingExample_test -- (closedMain)
 
 import           Test.Framework
 import Lib.DerivingExample
+import Lib.DerivingExampleDerive
+import Data.Text
 
+test_int = assertEqual 0 (zero::Int)
+test_a = assertEqual (Ax "" :: Ax) zero
 
-
+--test_b = assertEqual (B1 0) zero
 

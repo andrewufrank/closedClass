@@ -11,6 +11,10 @@
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE DefaultSignatures
+    , DeriveGeneric
+    , TypeOperators
+         #-}
 module Lib.DerivingExample
     where
 
@@ -18,6 +22,7 @@ module Lib.DerivingExample
 import           Test.Framework
 import Data.Text
 --import Uniform.Strings
+import GHC.Generics
 
 
 deriveTest :: IO ()
@@ -25,7 +30,8 @@ deriveTest = return ()
 
 class  Zeros z where
     zero :: z
-
+--    default zero :: _
+--    zero = gzero
 --    isZero  :: Eq z =>  z -> Bool
 --    isZero z = zero == z
 --    notZero :: Eq z =>  z -> Bool
@@ -36,6 +42,15 @@ class  Zeros z where
     -- gives a difficult to track error, because the type is not known
 
 
+--class (Ones z) =>  Ones (f z) where
+--    one :: f z
+--    default one :: f z
+--    one = gone (from z1)
+--
+--class GOnes f  where
+--    gone :: f a -> ()
+--instance GOnes U1 where
+--    gone U1 = ()
 
 
 instance Zeros Char where zero = ' '
