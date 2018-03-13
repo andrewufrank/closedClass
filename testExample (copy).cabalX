@@ -29,27 +29,26 @@ library
 --        split,
 --        data-easy
 ----        uniform-algebras
---        , uniform-strings
---        , uniform-fileio
---        , uniform-algebras
---        , aeson
---        , unordered-containers
---        , containers
---        , NLPservices
---        , TreeTagSets
---        , litFoundation
---        , rdf4h
+        , uniform-strings
+        , uniform-fileio
+        , uniform-algebras
+        , aeson
+        , unordered-containers
+        , containers
+        , NLPservices
+        , TreeTagSets
+        , litFoundation
+        , rdf4h
 
     exposed-modules:
-            Lib.DerivingExample
 --         ClosedClass
---         Lib.BlogExample
---         Lib.Tutorial1
---         Lib.ParseJsonCoreNLP
---         Lib.CorefOnly
---         Lib.CorefOnlyEdited
---         Lib.Doc2ToDoc0
---         Lib.ProduceNLPtriples2
+         Lib.BlogExample
+         Lib.Tutorial1
+         Lib.ParseJsonCoreNLP
+         Lib.CorefOnly
+         Lib.CorefOnlyEdited
+         Lib.Doc2ToDoc0
+         Lib.ProduceNLPtriples2
 --        StringConversion
     --     Uniform.Strings
     -- -- for testing, afterwards include in test-suite
@@ -59,35 +58,34 @@ library
     default-language: Haskell2010
     hs-source-dirs: .
 
-Test-Suite TestAuto
-    type:       exitcode-stdio-1.0
-    main-is:    ExampleTesting.hs
-    build-depends: base, HTF
-            , testExample >=0.0.2
+--Test-Suite TestAuto
+--    type:       exitcode-stdio-1.0
+--    main-is:    ExampleTesting.hs
+--    build-depends: base, HTF
+--            , testExample >=0.0.2
 --            , uniform-strings
 --            , uniform-fileio
---            , uniform-convenience
---        , bytestring
---        , safe
-        -- , test-framework
---        , test-invariant
---        , text
---        , snap-core
---        , network-uri
---        , bytestring
---        , quickcheck-text
+----            , uniform-convenience
+----        , bytestring
+----        , safe
+--        -- , test-framework
+----        , test-invariant
+----        , text
+----        , snap-core
+----        , network-uri
+----        , bytestring
+----        , quickcheck-text
 --            , aeson
 --            , utf8-string
 --        , TreeTagSets
 --        , litFoundation
 --        , rdf4hextension
 --        , NLPservices
---        , pretty-show
---        , generic-pretty
-    default-language: Haskell2010
-    hs-source-dirs: tests
-    other-modules:
-        Lib.DerivingExample_test
+----        , pretty-show
+----        , generic-pretty
+--    default-language: Haskell2010
+--    hs-source-dirs: tests
+--    other-modules:
 --         Lib.BlogExample_test
 --         Lib.Tutorial1_test
 --         Lib.ParseJsonCoreNLP_test
@@ -99,10 +97,10 @@ Test-Suite TestAuto
 executable testExampleMain
     main-is:    ClassMain.hs
     build-depends: base, HTF
-        , testExample
---        , uniform-strings
---        , uniform-convenience
---            , uniform-fileio
+        , testExample >=0.0.2
+        , uniform-strings
+        , uniform-convenience
+            , uniform-fileio
 --        , safe
 --        -- , test-framework  -- clash with HTF
 --        , test-invariant
@@ -111,11 +109,11 @@ executable testExampleMain
 --        , network-uri
 --        , bytestring
 --        , quickcheck-text
---        , TreeTagSets
---        , litFoundation
---        , rdf4hextension
---        , NLPservices
---        , aeson
+        , TreeTagSets
+        , litFoundation
+        , rdf4hextension
+        , NLPservices
+        , aeson
     default-language: Haskell2010
     hs-source-dirs: src
     other-modules:
