@@ -35,8 +35,8 @@ module Main     where      -- must have Main (main) or Main where
 --pimport Parser.NLPvocabulary (ParaSigl (..), SnipID (..), mkSnipSigl)
 --import Data.RDF.Extension
 --import Producer.Servers -- (PartURI)
-import Lib.DerivingExample
-
+--import Lib.DerivingExample
+import Lib.DerivingMinimalExample
 main :: IO ()
 main =  do  -- with tests in other modules
         deriveTest
