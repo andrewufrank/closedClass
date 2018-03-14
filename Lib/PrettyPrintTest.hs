@@ -11,7 +11,7 @@
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE OverloadedStrings     #-}
-module PrettyPrintTest  -- (openMain, htf_thisModuelsTests)
+module Lib.PrettyPrintTest  -- (openMain, htf_thisModuelsTests)
      where
 
 

@@ -10,8 +10,8 @@ module Main     where      -- must have Main (main) or Main where
 
 --import System.Exit
 
-import           ClosedClass
-import           PrettyPrintTest
+--import           Lib.ClosedClass
+import           Lib.PrettyPrintTest
 
 main :: IO ()
 main =  do  -- with tests in other modules
