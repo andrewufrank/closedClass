@@ -43,7 +43,11 @@ newtype Ax = Ax Text
      deriving newtype (Show, Read, Eq, Ord, Zeros)
 
 data Bx = B1 Int
-     deriving stock (Show, Read, Eq, Ord, Generic)  --not Zeros
+     deriving stock (Show, Read, Eq, Ord, Generic)
+--     deriving anyclass Zeros
+instance Zeros Bx where zero = B1 zero
+
+       --not Zeros
 --     deriving anyclass (Show, Read, Eq, Ord, Generic, Zeros)
      -- anyclass gives no methods
      -- stock works not for "my" classes
