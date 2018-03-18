@@ -2,6 +2,6 @@ flags: {}
 extra-package-dbs: []
 packages:
 - '.'
-- ../uniform-strings
+- ../uniform/uniform-strings
 extra-deps: []
 resolver: lts-8.13
