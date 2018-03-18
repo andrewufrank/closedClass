@@ -17,6 +17,9 @@ library
         , test-invariant
         , uniform-strings
         , uniform-error
+        , uniform-fileio
+        , Hs-conllu
+
 --        network-uri,
 --        monads-tf,
 --        bytestring,
