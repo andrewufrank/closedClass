@@ -4,12 +4,12 @@
 -- insert {-@ HTF_TESTS @-} for each import
 -----------------------------------------------------------------------------
 --{-# OPTIONS_GHC -F -pgmF htfpp #-}
---{-# LANGUAGE FlexibleContexts      #-}
---{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE FlexibleInstances     #-}
 --{-# LANGUAGE MultiParamTypeClasses #-}
 --{-# LANGUAGE ScopedTypeVariables   #-}
 --{-# LANGUAGE TypeFamilies          #-}
---{-# LANGUAGE TypeSynonymInstances  #-}
+{-# LANGUAGE TypeSynonymInstances  #-}
 --{-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE DeriveGeneric
     , DeriveAnyClass
@@ -29,13 +29,12 @@ class   Zeros z where
     default zero :: (Generic z, Gzero (Rep z)) => z
     zero = gzero (from z)
 
-instance Generic Int
-
 class Gzero f  where
     gzero :: f a -> a
 instance Gzero (Rec0 Int) where
-    gzero (Rec0 i a) = a
+    gzero (K1 i) = i
 
+instance Generic Int
 
 data B1 = B1 Int
      deriving stock (Show, Read, Eq, Ord, Generic)
