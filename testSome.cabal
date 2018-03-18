@@ -1,5 +1,5 @@
-name: testExample
-version: 0.0.2
+name: testSome
+version: 0.0.3
 cabal-version: >=1.20
 build-type: Simple
 license: AllRightsReserved
@@ -13,13 +13,15 @@ author: Andrew U. Frank
 library
     build-depends:
         base >=4.8 && <= 5
+        , HTF
+        , test-invariant
+        , uniform-strings
+        , uniform-error
 --        network-uri,
 --        monads-tf,
-        , HTF
 --        bytestring,
 --        text, utf8-string,
         -- for testing
-        ,test-invariant
 --        ,quickcheck-text
 --        numeric-prelude,
 --        snap-core,
@@ -29,25 +31,20 @@ library
 --        split,
 --        data-easy
 ----        uniform-algebras
-        ,uniform-strings
+--        , HList
 
     exposed-modules:
-         ClosedClass
-         OpenClass
---        StringConversion
-    --     Uniform.Strings
-    -- -- for testing, afterwards include in test-suite
-    --     Uniform.StringConversion
-    --     Uniform.StringUtilities
-    --     Uniform.StringInfix
+         FirstSub
+         SecondSub
     default-language: Haskell2010
     hs-source-dirs: Lib
 
 executable main
     main-is:    ClassMain.hs
     build-depends: base, HTF
-        , testExample >=0.0.2
+        , testSome
         , uniform-strings
+        , uniform-convenience
 --        , safe
 --        -- , test-framework  -- clash with HTF
 --        , test-invariant
@@ -65,7 +62,7 @@ Test-Suite TestAuto
     type:       exitcode-stdio-1.0
     main-is:    ExampleTesting.hs
     build-depends: base, HTF
-            , testExample >=0.0.2
+            , testSome
             , uniform-strings
 --        , safe
         -- , test-framework

@@ -3,6 +3,7 @@
 -- Module      :   a test for HTF framework
 -- insert {-@ HTF_TESTS @-} for each import
 -----------------------------------------------------------------------------
+{-# OPTIONS_GHC -F -pgmF htfpp #-}
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -10,20 +11,19 @@
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE FunctionalDependencies    #-}
+{-# LANGUAGE DataKinds    #-}
 
-module Main     where      -- must have Main (main) or Main where
+module SecondSub
+
+    where
 
 
---import System.Exit
+import           Test.Framework
+import Uniform.Strings
 
-import           FirstSub
-import           Uniform.Convenience.StartApp
-                    hiding ((<>) , (</>), (<.>))
-programName = "testSome" :: Text
-progTitle = "testing xx " :: Text
 
-main :: IO ()
-main = startProg programName progTitle
-            ( firstMain
-            )
+
+
+
 
