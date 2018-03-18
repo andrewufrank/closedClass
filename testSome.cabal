@@ -19,6 +19,7 @@ library
         , uniform-error
         , uniform-fileio
         , Hs-conllu
+        , megaparsec
 
 --        network-uri,
 --        monads-tf,
