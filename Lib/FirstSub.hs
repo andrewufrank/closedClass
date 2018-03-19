@@ -26,6 +26,10 @@ import Conllu.Type as T
 import qualified Conllu.Parse as P -- (document, Parser)  -- this is the parser!
 import qualified Text.Megaparsec as M
 import CoreNLP.DocNLP_0or1
+import CoreNLP.Doc1_absoluteID
+import CoreNLP.Doc2ToLinear
+import CoreNLP.Linear2Triple
+
 import Data.RDFext.Codes
 import qualified NLP.Corpora.UD as UD
 import qualified NLP.Types.Tags      as NLP
@@ -104,7 +108,7 @@ instance  ConvertTo1 UD.POStag  T.Token (Token0 UD.POStag) where
 convertTo1deps :: postag -> LanguageCode -> T.Token -> Dependence1
 convertTo1deps _ lang T.SToken {..} = Dependence1 {..}
         where
-            d1type = parseDEPtag (showT _deprel) :: DepCode
+            d1type = maybe (DepUnknown $ showT _deprel) (id)  _deprel  :: DepCode
             d1orig = zero -- dep_dep
             d1govid = maybe zero TokenID _dephead
             d1depid = TokenID _ix
@@ -135,6 +139,16 @@ test_read3 =   do
 
         putIOwords ["converted to doc1 format", s2t $ ppShow doc1]
 
+--        let doc3 = to1op doc1
+        let doc4 = to11opUD doc1   -- absolute
+--        putIOwords ["converted to absolute format", s2t $ ppShow doc4]
+        let docLin5 = toLinUD doc4   -- linear
+--        putIOwords ["converted to linear format", s2t $ ppShow docLin5]
+        let docTrip6 = toTripleUD docLin5 -- triples
+        putIOwords ["converted to Triple format", s2t $ ppShow docTrip6]
+        let docNT = toNT docTrip6  -- NT
+        putIOwords ["converted to NT format", docNT]
+
 ----        res1 <- callIO $  readConllu "veryshort1ud_copy).txt"
 --        res1 <- callIO $  readConllu fn
 --        putIOwords ["result from readConllu", showT res1]
@@ -144,7 +158,7 @@ test_read3 =   do
 --                , ret2]
 --
 --
-        return (in1, ret2)
+        return ("","X")
     case res of
         Left msg -> do
             putIOwords ["error was", msg]
@@ -152,7 +166,7 @@ test_read3 =   do
         Right (exp, ret) -> do
             assertEqual exp ret
 
-singleton s = [s]
+--singleton s = [s]
 
 {-
 test_read1 = do
