@@ -11,6 +11,7 @@
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE RecordWildCards     #-}
 
 module FirstSub
     where
@@ -24,6 +25,11 @@ import Conllu.Print as Pr
 import Conllu.Type as T
 import qualified Conllu.Parse as P -- (document, Parser)  -- this is the parser!
 import qualified Text.Megaparsec as M
+import CoreNLP.DocNLP_0or1
+import Data.RDFext.Codes
+import qualified NLP.Corpora.UD as UD
+import qualified NLP.Types.Tags      as NLP
+import Text.Show.Pretty
 
 firstMain :: ErrIO ()
 firstMain = do
@@ -49,6 +55,62 @@ prettyPrintConlluSentence ::T.Sentence -> Text
 -- | prettyprint a single sentence
 prettyPrintConlluSentence s = s2t . Pr.fromDiffList . Pr.printSent $ s
 
+-- convert to Doc1
+instance  ConvertTo1 UD.POStag  [T.Sentence] (Doc1 UD.POStag) where
+    convertTo1 postag lang sents = Doc1 {..}
+        where
+            doc1sents = zipWith  (convertTo1sentence  postag lang) [1..] sents
+            -- needs numbering of sentences
+            doc1corefs = Nothing
+
+convertTo1sentence :: UD.POStag -> LanguageCode -> Int -> T.Sentence -> Sentence1 UD.POStag
+--instance ConvertTo1 postag  T.Sentence (Sentence1 postag) where
+convertTo1sentence  postag lang i T.Sentence {..} = Sentence1 {..}
+        where
+            s1id = SentenceID i  -- must start with 1 to conform with coreNLP in general
+            s1parse = Nothing
+            s1toks = map (convertTo1 postag lang) _tokens
+            s1deps = Just $ map (convertTo1deps postag lang) _tokens
+                    -- extract the dependencies from the tokens
+            s1entitymentions = Nothing
+
+instance  ConvertTo1 UD.POStag  T.Token (Token0 UD.POStag) where
+    convertTo1 _ lang T.SToken {..} = Token0 {..}
+      where
+        tid = TokenID  _ix
+        tword = maybe zero   (\l -> Wordform0 $ LCtext  (s2t l) lang) _form
+        twordOrig = Nothing
+--        if tok_word == tok_originalText then Nothing else Just tok_originalText
+        tlemma = maybe zero (\l -> Lemma0 $ LCtext (s2t l) lang) _lemma
+        tpos = maybe UD.tagUNK (\p -> ( NLP.parseTag  . showT $ p ) )   _upostag
+        tfeature = _feats
+        tposOrig = Just . showT $ _upostag
+--        if showT pos == tok_pos then Nothing else Just tok_pos
+        -- missig a test that parse was complete
+        tpostt = Nothing
+        tner = []
+--        parseNERtagList [tok_ner] -- when is this a list?
+        tnerOrig = Nothing
+--            if (any isAnUnknownNER $ tner) then Just [tok_ner] else Nothing
+                        -- use the Ner2 values?
+        tspeaker = []
+--            parseSpeakerTagList . maybeToList $ tok_speaker
+--                    maybe [] (\a -> [a]) $ tok_speaker
+        tbegin = zero -- tok_characterOffsetBegin
+        tend = zero --  tok_characterOffsetEnd
+        tbefore = Just $ if tpos == UD.PUNCT then "" else " " -- tok_before
+        tafter = Just "" -- tok_after
+
+convertTo1deps :: postag -> LanguageCode -> T.Token -> Dependence1
+convertTo1deps _ lang T.SToken {..} = Dependence1 {..}
+        where
+            d1type = parseDEPtag (showT _deprel) :: DepCode
+            d1orig = zero -- dep_dep
+            d1govid = maybe zero TokenID _dephead
+            d1depid = TokenID _ix
+            d1govGloss = zero -- LCtext {ltxt = dep_governorGloss, llang = lang}
+            d1depGloss = maybe zero   (\l ->  LCtext  (s2t l) lang) _form
+
 
 test_read3 =   do
     res   <- runErr $ do
@@ -57,14 +119,21 @@ test_read3 =   do
         in1 :: Text <- readFile2 (makeRelFile fn)
         putIOwords ["read short1ud.txt", in1]
 
-        let res1 = parseConllu (P.documentC P.sentence) in1
+        let res1 = parseConllu (P.documentC P.sentence) in1  :: ErrOrVal [T.Sentence]
 
         let res2 = case res1 of
                     Right ss -> unlines' $ map showT ss
-                    Left msg -> msg
+                    Left msg -> errorT [msg]
         putIOwords ["result from parse ", res2]
         let ret2 = concat' $ either singleton (map prettyPrintConlluSentence) res1
         putIOwords ["result from parse pretty ", ret2]
+
+--        let res3 = either (error . t2s) id  res1  :: [T.Sentence]
+        let res4 = fromRightEOV res1 ::[T.Sentence]
+
+        let doc1 = convertTo1 (UD.undefUPOS::UD.POStag) English res4  :: Doc1 UD.POStag
+
+        putIOwords ["converted to doc1 format", s2t $ ppShow doc1]
 
 ----        res1 <- callIO $  readConllu "veryshort1ud_copy).txt"
 --        res1 <- callIO $  readConllu fn

@@ -7,8 +7,15 @@ packages:
 - ../uniform/uniform-convenience
 - ../uniform/uniform-fileio
 - ../uniform/uniform-algebras
+- ../uniform/uniform-http
 - ../fromOthers/hs-conllu
-
+- ../LitTextWork/NLPservices
+- ../TreeTagSets
+- ../rdf4h
+- ../LitTextWork/rdf4hextension
+- ../LitTextWork/LitFoundation
 extra-deps:
+- hgal-2.0.0.2
+- parsec-extra-0.2.0.0
 - test-invariant-0.4.5.0
 resolver: lts-10.1
