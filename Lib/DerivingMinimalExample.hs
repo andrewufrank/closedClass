@@ -10,13 +10,14 @@
 --{-# LANGUAGE ScopedTypeVariables   #-}
 --{-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
---{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE DeriveGeneric
     , DeriveAnyClass
     , GeneralizedNewtypeDeriving
     , StandaloneDeriving
     , DefaultSignatures
     , DerivingStrategies
+    , TypeOperators
          #-}
 
 module Lib.DerivingMinimalExample
@@ -24,23 +25,31 @@ module Lib.DerivingMinimalExample
 
 import GHC.Generics
 
-class   Zeros z where
-    zero :: z
-    default zero :: (Generic z, Gzero (Rep z)) => z
-    zero = gzero (from z)
+import Data.Text
 
-class Gzero f  where
-    gzero :: f a -> a
-instance Gzero (Rec0 Int) where
-    gzero (K1 i) = i
+class   Zeros a where
+    zero :: a
+    default zero :: (Generic a, GZero (Rep a)) => a
+    zero = to gzero
 
-instance Generic Int
+class GZero a  where
+    gzero :: a x
+instance GZero U1 where
+    gzero = U1
+instance Zeros a => GZero (K1 i a) where
+    gzero = K1 zero
+instance (GZero a, GZero b) => GZero (a :*: b) where
+    gzero = gzero :*: gzero
+instance GZero a => GZero (M1 i c a) where
+    gzero = M1 gzero
+
 
 data B1 = B1 Int
-     deriving stock (Show, Read, Eq, Ord, Generic)
-deriving instance Zeros B1
+     deriving   (Show, Read, Eq, Ord, Generic, Zeros)
+newtype Ax = Ax Text
+     deriving  (Show, Read, Eq, Ord, Generic, Zeros)
 
 
 instance Zeros Int where zero = 0
-
+instance Zeros Text where zero = ""
 

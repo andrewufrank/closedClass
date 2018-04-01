@@ -15,8 +15,8 @@ module Lib.DerivingExample_test -- (closedMain)
 
 
 import           Test.Framework
-import Lib.DerivingExample
-import Lib.DerivingExampleDerive
+import Lib.DerivingMinimalExample
+--import Lib.DerivingExampleDerive
 import Data.Text
 
 test_int = assertEqual 0 (zero::Int)
