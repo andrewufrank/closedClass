@@ -64,6 +64,28 @@ instance (LF1 f, LF1 h) => LF1 (f :*: h) where
 --  mkOne = mkOne :*: mkOne
   gappendTwo (x1 :*: y1) (x2 :*: y2) = gappendTwo x1 x2 :*: gappendTwo y1 y2
 
+-----------------------
+class Single l   where
+--    type LFx l
+    mkOne :: x -> l
+    default mkOne :: (Generic l, Generic x, Single l, Gsingle (Rep l)) => x -> l
+    mkOne x = to ( gmkOne (from x))
+
+class Gsingle l where
+--    type LFG l
+    gmkOne :: x -> l x
+instance Gsingle U1 where   -- this is for zero
+  gmkOne x = U1
+
+instance  (Gsingle a) => Gsingle (K1 i a) where
+    gmkOne (K1 x) = K1 (mkOne x)
+
+instance Single f => Gsingle (M1 i c f) where
+  gmkOne (M1 x1) = M1 (gmkOne x1)
+
+instance (Gsingle f, Gsingle h) => Gsingle (f :*: h) where
+  gmkOne  (x1 :*: y1) = gmkOne x1:*: gmkOne y1
+
 --------------------------------------------------------------------------------
 
 --memptydefault :: (Generic a, ListForms1 (Rep a)) => a
