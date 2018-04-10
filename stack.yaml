@@ -6,7 +6,7 @@ packages:
 #- ../uniform/uniform-error
 #- ../uniform/uniform-convenience
 #- ../uniform/uniform-fileio
-#- ../uniform/uniform-algebras
+- ../uniform/uniform-algebras
 
 extra-deps:
 resolver: nightly-2018-04-03

@@ -32,7 +32,7 @@ library
 --        -- fay-base,
 --        split,
 --        data-easy
-----        uniform-algebras
+        , uniform-algebras
 --        , HList
 
     exposed-modules:
