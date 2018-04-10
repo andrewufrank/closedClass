@@ -3,34 +3,29 @@
 -- Module      :   a test for HTF framework
 -- insert {-@ HTF_TESTS @-} for each import
 -----------------------------------------------------------------------------
---{-# OPTIONS_GHC -F -pgmF htfpp #-}
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE FlexibleInstances     #-}
---{-# LANGUAGE MultiParamTypeClasses #-}
---{-# LANGUAGE ScopedTypeVariables   #-}
---{-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
 {-# LANGUAGE OverloadedStrings     #-}
-{-# LANGUAGE DeriveGeneric
-    , DeriveAnyClass
-    , GeneralizedNewtypeDeriving
-    , StandaloneDeriving
-    , DefaultSignatures
-    , DerivingStrategies
-    , TypeOperators
-         #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass,
+  GeneralizedNewtypeDeriving, DefaultSignatures, DerivingStrategies,
+  TypeOperators, ConstrainedClassMethods #-}
+
 
 module Lib.DerivingMinimalExample
-    where
+where
 
-import GHC.Generics
+import           GHC.Generics
+import           Uniform.Strings
+import           Data.Text
 
-import Data.Text
-
-class   Zeros a where
+class  Zeros a where
     zero :: a
     default zero :: (Generic a, GZero (Rep a)) => a
     zero = to gzero
+
+    isZero :: Eq a => a -> Bool
+    isZero = (zero ==)
 
 class GZero a  where
     gzero :: a x
@@ -52,4 +47,16 @@ newtype Ax = Ax Text
 
 instance Zeros Int where zero = 0
 instance Zeros Text where zero = ""
+
+deriveTest2 :: IO ()
+deriveTest2 = do
+    putIOwords ["deriveTest2"]
+    return ()
+
+deriveTest3 = do
+    putIOwords ["deriveTest3"]
+    return ()
+
+
+
 
