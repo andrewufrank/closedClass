@@ -66,14 +66,14 @@ instance (LF1 f, LF1 h) => LF1 (f :*: h) where
 
 -----------------------
 class Single l   where
---    type LFx l
-    mkOne :: x -> l
-    default mkOne :: (Generic l, Generic x, Single l, Gsingle (Rep l)) => x -> l
+    type ST l
+    mkOne :: (ST l) -> l
+    default mkOne :: (Generic l, Generic (ST l), Single l, Gsingle (Rep l)) => (ST l) -> l
     mkOne x = to ( gmkOne (from x))
 
 class Gsingle l where
---    type LFG l
-    gmkOne :: x -> l x
+    type STG l
+    gmkOne :: (STG l)  -> l x
 instance Gsingle U1 where   -- this is for zero
   gmkOne x = U1
 
