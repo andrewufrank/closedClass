@@ -26,24 +26,25 @@ import GHC.Generics
 import Control.Monad.Error  -- is monads-tf
 
 import Uniform.Zero
+import GenericLF
 
-class ListForms1 l   where
-    type LF l
-    prependOne  :: (LF l) -> l   -> l
-    appendOne :: l   -> (LF l) -> l
-    mkOne :: (LF l) -> l
-    unMakeOne :: l -> (LF l)  -- succeds only for singleton, not for export
-    appendTwo  :: l  -> l   -> l
-
-    prependOne a la = appendTwo  (mkOne a) la
-    appendOne la a = appendTwo la (mkOne a)
---    appendTwo = (<>)
-    {-# Minimal appendTwo, mkOne #-}
+--class ListForms1 l   where
+--    type LF l
+--    prependOne  :: (LF l) -> l   -> l
+--    appendOne :: l   -> (LF l) -> l
+--    mkOne :: (LF l) -> l
+--    unMakeOne :: l -> (LF l)  -- succeds only for singleton, not for export
+--    appendTwo  :: l  -> l   -> l
+--
+--    prependOne a la = appendTwo  (mkOne a) la
+--    appendOne la a = appendTwo la (mkOne a)
+----    appendTwo = (<>)
+--    {-# Minimal appendTwo, mkOne #-}
 
 -- a server URI (not including the port, but absolute)
 newtype T1 = T1 {unT1 :: Text}
                 deriving (Show, Read, Eq, Ord, Generic, Zeros  -- , Semigroup, Monoid
---                        , ListForms
+                        , ListForms1
                     )
 
 
@@ -55,12 +56,12 @@ instance ListForms1 Text where
     unMakeOne = T.head
     appendTwo = T.append
 --deriving
-instance   ListForms1 T1
-    where
-    type LF T1 = Text
-    mkOne = T1
-    unMakeOne = unT1
-    appendTwo a b = mkOne $ appendTwo (unMakeOne a)  (unMakeOne b)
+--instance   ListForms1 T1
+--    where
+--    type LF T1 = Text
+--    mkOne = T1
+--    unMakeOne = unT1
+--    appendTwo a b = mkOne $ appendTwo (unMakeOne a)  (unMakeOne b)
 
 firstMain :: IO ()
 firstMain = return ()
