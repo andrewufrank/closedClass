@@ -2,12 +2,11 @@ flags: {}
 extra-package-dbs: []
 packages:
 - .
-- ../uniform/uniform-strings
-- ../uniform/uniform-error
-- ../uniform/uniform-convenience
-- ../uniform/uniform-fileio
-- ../uniform/uniform-algebras
+#- ../uniform/uniform-strings
+#- ../uniform/uniform-error
+#- ../uniform/uniform-convenience
+#- ../uniform/uniform-fileio
+#- ../uniform/uniform-algebras
 
 extra-deps:
-- test-invariant-0.4.5.0
-resolver: lts-10.1
+resolver: nightly-2018-04-03
