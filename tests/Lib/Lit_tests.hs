@@ -5,17 +5,11 @@
 -----------------------------------------------------------------------------
 {-# OPTIONS_GHC -F -pgmF htfpp #-}
 
-module Main     where      -- must have Main (main) or Main where
+module Lib.Lit_tests     where      -- must have Main (main) or Main where
 
 
 --import System.Exit
 
 import           Test.Framework
-import {-@ HTF_TESTS @-} FirstSub   -- pay attention to HTF_TESTS !
 
-main =  do  -- with tests in other modules
-    putStrLn "HTF ExampleTest.hs:\n"
-    p <- htfMain htf_importedTests
-    putStrLn ("HTF end StringConversion.hs test:\n" ++ show p)
-    return ()
-
+test_1 = assertBool True

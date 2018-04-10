@@ -27,7 +27,7 @@ import Control.Monad.Error  -- is monads-tf
 
 import Uniform.Zero
 
-class ListForms l   where
+class ListForms1 l   where
     type LF l
     prependOne  :: (LF l) -> l   -> l
     appendOne :: l   -> (LF l) -> l
@@ -49,13 +49,13 @@ newtype T1 = T1 {unT1 :: Text}
 
 instance Zeros Text where zero = ""
 
-instance ListForms Text where
+instance ListForms1 Text where
     type LF Text = Char
     mkOne = T.singleton
     unMakeOne = T.head
     appendTwo = T.append
 --deriving
-instance   ListForms T1
+instance   ListForms1 T1
     where
     type LF T1 = Text
     mkOne = T1
