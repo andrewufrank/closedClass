@@ -38,31 +38,31 @@ class ListForms1 l   where
 --    mkOne = to gmkOne
 
     appendTwo  :: l    -> l   -> l
-    default appendTwo :: (Generic l, ListForms1 l, LF1 (Rep l)) => l    -> l    -> l
+    default appendTwo :: (Generic (l), ListForms1 l, LF1 (Rep l)) => l   -> l    -> l
     appendTwo x y = to (gappendTwo (from x) (from y))
 
 
 class LF1 l where
 --    type LFG l
 --    gmkOne :: (LFG l) -> l
-    gappendTwo :: l   -> l   -> l
+    gappendTwo :: l x  -> l x  -> l x
 
 
---instance LF1 U1 where   -- this is for zero
-----  gmkOne x = U1
---  gappendTwo U1 U1 = U1
+instance LF1 U1 where   -- this is for zero
+--  gmkOne x = U1
+  gappendTwo U1 U1 = U1
 
---instance  (ListForms1 a) => LF1 (K1 i a) where
-----  gmkOne x = K1 (mkOne x)
---  gappendTwo (K1 x) (K1 y) = K1 (x `appendTwo` y)
---
---instance ListForms1 f => LF1 (M1 i c f) where
-----  mkOne = M1 mkOne
---  gappendTwo (M1 x) (M1 y) = M1 (x `appendTwo` y)
---
---instance (ListForms1 f, ListForms1 h) => LF1 (f :*: h) where
-----  mkOne = mkOne :*: mkOne
---  gappendTwo (x1 :*: y1) (x2 :*: y2) = appendTwo x1 x2 :*: appendTwo y1 y2
+instance  (ListForms1 a) => LF1 (K1 i a) where
+--  gmkOne x = K1 (mkOne x)
+  gappendTwo (K1 x) (K1 y) = K1 (x `appendTwo` y)
+
+instance LF1 f => LF1 (M1 i c f) where
+--  mkOne = M1 mkOne
+  gappendTwo (M1 x) (M1 y) = M1 (x `gappendTwo` y)
+
+instance (LF1 f, LF1 h) => LF1 (f :*: h) where
+--  mkOne = mkOne :*: mkOne
+  gappendTwo (x1 :*: y1) (x2 :*: y2) = gappendTwo x1 x2 :*: gappendTwo y1 y2
 
 --------------------------------------------------------------------------------
 

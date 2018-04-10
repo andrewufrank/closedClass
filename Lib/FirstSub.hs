@@ -16,8 +16,10 @@
     , DeriveAnyClass
       #-}
 
-module FirstSub
-    where
+module FirstSub (module FirstSub
+    , module Uniform.Zero
+    , module GenericLF
+    )  where
 
 import Data.Text as T
 import Data.Text.IO as T
@@ -42,7 +44,7 @@ import GenericLF
 --    {-# Minimal appendTwo, mkOne #-}
 
 -- a server URI (not including the port, but absolute)
-newtype T1 = T1 {unT1 :: Text}
+newtype T1 = T1 {unT1 :: String}
                 deriving (Show, Read, Eq, Ord, Generic, Zeros  -- , Semigroup, Monoid
                         , ListForms1
                     )
@@ -50,12 +52,14 @@ newtype T1 = T1 {unT1 :: Text}
 
 instance Zeros Text where zero = ""
 
+instance ListForms1 String where
+    appendTwo = (++)
 
-instance ListForms1 [] where
+instance ListForms1 Text where
 --    type LF Text = Char
-    mkOne =  single
+--    mkOne =  single
 --    unMakeOne = T.head
-    appendTwo = (++)  -- T.append
+    appendTwo =  T.append
 --deriving
 --instance   ListForms1 T1
 --    where
