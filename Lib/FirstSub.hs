@@ -50,11 +50,12 @@ newtype T1 = T1 {unT1 :: Text}
 
 instance Zeros Text where zero = ""
 
-instance ListForms1 Text where
-    type LF Text = Char
-    mkOne = T.singleton
-    unMakeOne = T.head
-    appendTwo = T.append
+
+instance ListForms1 [] where
+--    type LF Text = Char
+    mkOne =  single
+--    unMakeOne = T.head
+    appendTwo = (++)  -- T.append
 --deriving
 --instance   ListForms1 T1
 --    where
@@ -62,6 +63,9 @@ instance ListForms1 Text where
 --    mkOne = T1
 --    unMakeOne = unT1
 --    appendTwo a b = mkOne $ appendTwo (unMakeOne a)  (unMakeOne b)
+
+single :: a -> [a]
+single a = [a]
 
 firstMain :: IO ()
 firstMain = return ()
