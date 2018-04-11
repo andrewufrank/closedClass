@@ -11,7 +11,8 @@ module Main     where      -- must have Main (main) or Main where
 --import System.Exit
 
 import           Test.Framework
-import {-@ HTF_TESTS @-} Lib.Lit_tests
+--import {-@ HTF_TESTS @-} Lib.Lit_tests
+import {-@ HTF_TESTS @-} Lib.Pointed_tests
 
 main =  do  -- with tests in other modules
     putStrLn "HTF ExampleTest.hs:\n"

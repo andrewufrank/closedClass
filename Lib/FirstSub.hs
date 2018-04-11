@@ -45,8 +45,8 @@ import GenericLF
 
 -- a server URI (not including the port, but absolute)
 newtype T1 = T1 {unT1 :: String}
-                deriving (Show, Read, Eq, Ord, Generic, Zeros  -- , Semigroup, Monoid
-                        , ListForms1
+                deriving (Show, Read, Eq, Ord, Generic, Generic1, Zeros  -- , Semigroup, Monoid
+                        , ListForms1, Single
                     )
 
 

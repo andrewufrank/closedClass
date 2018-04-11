@@ -66,25 +66,37 @@ instance (LF1 f, LF1 h) => LF1 (f :*: h) where
 
 -----------------------
 class Single l   where
-    type ST l
-    mkOne :: (ST l) -> l
-    default mkOne :: (Generic l, Generic (ST l), Single l, Gsingle (Rep l)) => (ST l) -> l
-    mkOne x = to ( gmkOne (from x))
+--    type LFx l
+    mkOne :: x -> l x
+    default mkOne :: (Generic1 l, Single (Rep1 l)) => x -> l x
+    mkOne = to1 . mkOne
 
-class Gsingle l where
-    type STG l
-    gmkOne :: (STG l)  -> l x
-instance Gsingle U1 where   -- this is for zero
-  gmkOne x = U1
+--class Gsingle l where
+----    type LFG l
+--    gmkOne :: x -> l x
 
-instance  (Gsingle a) => Gsingle (K1 i a) where
-    gmkOne (K1 x) = K1 (mkOne x)
+instance Single U1 where   -- this is for zero
+  mkOne _ = U1
 
-instance Single f => Gsingle (M1 i c f) where
-  gmkOne (M1 x1) = M1 (gmkOne x1)
+instance  (Zeros a) => Single (K1 i a) where
+    mkOne _ = K1  zero
 
-instance (Gsingle f, Gsingle h) => Gsingle (f :*: h) where
-  gmkOne  (x1 :*: y1) = gmkOne x1:*: gmkOne y1
+instance Single f => Single (M1 i c f) where
+   mkOne   = M1 . mkOne
+
+instance (Single f, Single h) => Single (f :*: h) where
+  mkOne  x =  mkOne x :*:  mkOne x
+
+instance Single Par1 where   -- this is for zero
+  mkOne = Par1
+
+instance  (Single l) => Single (Rec1 l) where
+    mkOne   = Rec1 . mkOne
+
+instance (Single f, Single h) => Single (f :.: h) where
+  mkOne =  Comp1 . mkOne .  mkOne
+
+
 
 --------------------------------------------------------------------------------
 
