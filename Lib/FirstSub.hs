@@ -31,20 +31,22 @@ import NLP.Corpora.Conll as Conll
 
 firstSub :: IO ()
 firstSub = do
-    putIOwords ["firstSub start", "trainingSentence:", trainingSentences]
+    putIOwords ["firstSub start", "trainingSentence:", show trainingSentences]
     t1 :: Perceptron <- trainNew parseTagConnl trainingSentences
---    putIOwords ["use tagger ", "for sentence:", testSentence]
+    putIOwords ["use tagger ", "for sentence:", show testSentence]
     let r1 = tag t1 $  testSentTokenized :: [TaggedSentence Conll.Tag]
---    putIOwords ["result", T.pack $ show r1]
+    putIOwords ["result",  show r1]
     return ()
 
 parseTagConnl :: Text -> Conll.Tag
 parseTagConnl = parseTag
 
 trainingSentences = "The/DT dog/NN jumped/VB ./.\nThe/DT cat/NN slept/VB ./." :: Text
-testSentence = T.lines $ "The doc slept." :: [Text]
+testSentence = T.lines $ "The dog slept." :: [Text]
 testSentTokenized = map tokenize testSentence :: [Sentence]
 
-putIOwords ::  [Text] -> IO()
-putIOwords = T.putStrLn . T.unwords
+putIOwordsT ::  [Text] -> IO()
+putIOwordsT = T.putStrLn . T.unwords
+putIOwords ::  [String] -> IO()
+putIOwords = putStrLn . unwords
 
