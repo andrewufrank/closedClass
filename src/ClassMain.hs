@@ -1,7 +1,6 @@
 -----------------------------------------------------------------------------
 --
--- Module      :   a test for HTF framework
--- insert {-@ HTF_TESTS @-} for each import
+-- Module      :  running the a main
 -----------------------------------------------------------------------------
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE FlexibleInstances     #-}
@@ -17,13 +16,13 @@ module Main     where      -- must have Main (main) or Main where
 --import System.Exit
 
 import           FirstSub
-import           Uniform.Convenience.StartApp
+--import           Uniform.Convenience.StartApp
                     hiding ((<>) , (</>), (<.>))
-programName = "testSome" :: Text
-progTitle = "testing xx " :: Text
+--programName = "testSome" :: Text
+--progTitle = "testing xx " :: Text
 
 main :: IO ()
-main = startProg programName progTitle
-            ( firstMain
-            )
+main = do
+            firstSub
+            return ()
 

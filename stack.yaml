@@ -2,11 +2,8 @@ flags: {}
 extra-package-dbs: []
 packages:
 - .
-#- ../uniform/uniform-strings
-#- ../uniform/uniform-error
-#- ../uniform/uniform-convenience
-#- ../uniform/uniform-fileio
-#- ../uniform/uniform-algebras
-
+- /home/frank/Workspace8/fromOthers/chatter-unchanged
 extra-deps:
-resolver: nightly-2018-04-03
+- fullstop-0.1.4
+- tokenize-0.3.0
+resolver: lts-10.3
