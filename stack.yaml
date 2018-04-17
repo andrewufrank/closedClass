@@ -2,8 +2,8 @@ flags: {}
 extra-package-dbs: []
 packages:
 - .
-- /home/frank/Workspace8/fromOthers/chatter-unchanged
 extra-deps:
+- chatter-0.8.0.1
 - fullstop-0.1.4
 - tokenize-0.3.0
 resolver: lts-10.3

@@ -44,7 +44,8 @@ library
 
 executable main
     main-is:    ClassMain.hs
-    build-depends: base, HTF
+    build-depends: base
+--        , HTF
         , testSome
 --        , uniform-strings
 --        , uniform-convenience
