@@ -15,19 +15,24 @@
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE DeriveAnyClass     #-}
 
-module Belnap
+module Belnap (BelnapLogic (..)
+    , htf_Belnap_thisModulesTests
+    , partialEQ
+    )
     where
 
 import Test.Framework
 import Uniform.Strings
 import Uniform.Error
 --import GHC.Generic
+
 import  Data.PartialOrd (PartialOrd, partialLEQ, partialEQ, partialLT, partialGT)
 
 
-data BelnapLogic = Aff | Rej |  Top | Bot deriving (Eq, Show, Read, Enum, Bounded)
+data BelnapLogic = Aff | Rej |  Top | Bot deriving (Eq, Show, Read, Ord, Enum, Bounded)
 
         -- affirmativ, reject = negative, indiffirent = not apply, contradiction
+        -- ord used for standard operations, eg. sort
 
 -- not4 :: BelnapLogic -> BelnapLogic
 instance  Arbitrary BelnapLogic where
