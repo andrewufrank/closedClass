@@ -18,6 +18,7 @@
 module Belnap (BelnapLogic (..)
     , htf_Belnap_thisModulesTests
     , partialEQ
+    , PartialRel (..)
     )
     where
 
@@ -28,6 +29,7 @@ import Uniform.Error
 
 import  Data.PartialOrd (PartialOrd, partialLEQ, partialEQ, partialLT, partialGT)
 
+data PartialRel = PEQ | PGT | PLT | INC  deriving (Eq, Show, Read, Ord, Enum, Bounded)
 
 data BelnapLogic = Aff | Rej |  Top | Bot deriving (Eq, Show, Read, Ord, Enum, Bounded)
 

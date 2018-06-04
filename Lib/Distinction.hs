@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 --
--- Module      :  the distinction algebra
+-- Module      :  distinction values
 -- insert {-@ HTF_TESTS @-} for each import
 -----------------------------------------------------------------------------
 {-# OPTIONS_GHC -F -pgmF htfpp #-}
@@ -15,7 +15,13 @@
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE DeriveAnyClass     #-}
 
-module Distinction
+module Distinction (Distinctions (..)
+    , DistPaper
+    , DistValue (..), dv2pair, pair2dv
+    , BelnapLogic (..), PartialRel(..)
+    , physObj'
+    , human', stuff'
+    )
     where
 
 import Test.Framework
@@ -38,11 +44,15 @@ data DistValue = DV {d :: DistPaper, v:: BelnapLogic} | DVtop | DVbot
             deriving (Show, Read, Eq, Ord)
             -- only Aff and Rej should occur, rest is always mapped to DVtop or DVbot?
 
-physObj = DV PhysObj Aff
+-- these are raw distinction values, not taxa
+physObj' = DV PhysObj Aff
 human' = DV Human Aff
 stuff' = DV Human Rej
 top' = DVtop
 bot' = DVbot
+
+dv2pair (DV d v) = (d,v)
+pair2dv (d,v) = DV d v
 
 instance Distinctions DistValue where
     sub DVbot _ = True
