@@ -17,11 +17,10 @@ library
         , HTF
 --        , test-invariant
         , uniform-strings
---        , uniform-error
---        network-uri,
-        , monads-tf
+--        , uniform-e
         , transformers
 
+       , partial-orders
 --        bytestring,
 --        text, utf8-string,
         -- for testing
