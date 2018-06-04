@@ -27,4 +27,4 @@ import Distinction
 firstMain :: IO ()
 firstMain = return ()
 
-test_F0 = assertEqual  True True
+--test_F0 = assertEqual  True True
