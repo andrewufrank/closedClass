@@ -27,7 +27,12 @@ import Distinction
 import qualified Data.Map as Map
 import Data.List
 
-type Taxon = Map.Map DistPaper BelnapLogic
+type Taxon = Map.Map DistPaper B4val
+
+instance Lattice Taxon where
+    lcompare = compareTaxon
+
+instance LatticeTests Taxon
 
 dvList2taxon :: [DistValue] -> Taxon
 dvList2taxon dvs =  Map.fromList . map dv2pair $ dvs
@@ -40,20 +45,25 @@ compareTaxon t1 t2 = if l1 == l2
                                     else if isPrefixOf l2 l1
                                         then PLT
                                         else INC
-
-
     where
         l1 = Map.toAscList t1
         l2 = Map.toAscList t2
 
 
+meetTaxon :: Taxon -> Taxon -> Taxon
+meetTaxon t1 t2 = t1
+
+    where
+        l1 = Map.toAscList t1
+        l2 = Map.toAscList t2
+
 physObj = dvList2taxon [physObj']
 human = dvList2taxon [physObj', human']
 stuff = dvList2taxon [physObj', stuff']
 
-test_0 = assertEqual (showT physObj) "fromList [(PhysObj,Aff)]"
-test_1 = assertEqual (showT human) "fromList [(PhysObj,Aff),(Human,Aff)]"
-test_2 = assertEqual (showT stuff) "fromList [(PhysObj,Aff),(Human,Rej)]"
+test_0 = assertEqual (showT physObj) "fromList [(PhysObj,True4)]"
+test_1 = assertEqual (showT human) "fromList [(PhysObj,True4),(Human,True4)]"
+test_2 = assertEqual (showT stuff) "fromList [(PhysObj,True4),(Human,False4)]"
 
 
 test_PEQ1 = assertEqual (compareTaxon physObj physObj) PEQ

@@ -15,10 +15,10 @@
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE DeriveAnyClass     #-}
 
-module Distinction (Distinctions (..)
+module Distinction (Lattice (..), LatticeTests(..)
     , DistPaper
     , DistValue (..), dv2pair, pair2dv
-    , BelnapLogic (..), PartialRel(..)
+    , B4val (..), PartialRel(..)
     , physObj'
     , human', stuff'
     )
@@ -27,40 +27,53 @@ module Distinction (Distinctions (..)
 import Test.Framework
 import Uniform.Strings
 import Uniform.Error
+--import qualified Data.PartialOrd as PO
 --import GHC.Generic
 
 import Belnap
 
-class Distinctions d where
-    sub, super :: d -> d -> Bool
---    order :: d -> d -> Ordering  -- use compare from Ord
-    join, meet :: d -> d -> d
 
 data DistPaper = PhysObj | Human | Liquid | Edible | Dairy
             | Tool | Cuttlery | Fermented
                 deriving (Show, Read, Eq, Ord, Enum, Bounded)
 
-data DistValue = DV {d :: DistPaper, v:: BelnapLogic} | DVtop | DVbot
+instance Arbitrary DistPaper where
+    arbitrary = arbitraryBoundedEnum
+
+data DistValue = DV {d :: DistPaper, v:: B4val} | DVtop | DVbot
             deriving (Show, Read, Eq, Ord)
-            -- only Aff and Rej should occur, rest is always mapped to DVtop or DVbot?
+            -- only True4 and Fals4 should occur, rest is always mapped to DVtop or DVbot?
+
+--instance Arbitrary (DistPaper, DistValue) where
+
+instance Arbitrary DistValue where
+--    arbitrary = arbitrary -- map pair2dv arbitrary  -- (arbitrary, arbitrary)
 
 -- these are raw distinction values, not taxa
-physObj' = DV PhysObj Aff
-human' = DV Human Aff
-stuff' = DV Human Rej
+physObj' = DV PhysObj True4
+human' = DV Human True4
+stuff' = DV Human False4
 top' = DVtop
 bot' = DVbot
 
 dv2pair (DV d v) = (d,v)
 pair2dv (d,v) = DV d v
 
-instance Distinctions DistValue where
-    sub DVbot _ = True
-    sub _ DVtop = True
-    sub (DV d1 v1) (DV d2 v2) = if d1 == d2 then partialEQ v1 v2 else False
+instance Lattice DistValue where
+--    lsub DVbot _ = True
+--    lsub _ DVtop = True
+--    lsub (DV d1 v1) (DV d2 v2) = if d1 == d2 then partialEQ v1 v2 else False
+    lsub a b = case lcompare a b of
+                    PLT -> True
+                    _ -> False
 
+    lcompare (DV d1 v1) (DV d2 v2) = if d1 == d2 then lcompare v1 v2 else INC
 
-test_1 = assertEqual (sub human' human')  False
-test_2 = assertEqual (sub human' top') True
-test_3 = assertEqual (sub human' stuff') False
+instance LatticeTests DistValue
 
+test_1 = assertEqual (lsub human' human')  False
+test_2 = assertEqual (lsub human' top') True
+test_3 = assertEqual (lsub human' stuff') False
+
+prop_compSymx :: DistValue -> DistValue -> Bool
+prop_compSymx = prop_compSym
