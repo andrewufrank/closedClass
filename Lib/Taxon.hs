@@ -39,7 +39,7 @@ instance Lattice Taxon where
 instance LatticeTests Taxon
 
 dvList2taxon :: [DistValue] -> Taxon
-dvList2taxon dvs =  Map.fromList . map dv2pair $ dvs
+dvList2taxon dvs =  Map.fromList . map dv2pair . normalizeTaxon $ dvs
 
 normalizeTaxon :: [DistValue] -> [DistValue]
 normalizeTaxon [] = []
@@ -106,13 +106,16 @@ test_2a = assertEqual (lsub human top) True
 test_3a = assertEqual (lsub human stuff) False
 
 
---test_meet1 = assertEqual (lmeet physObj physObj) physObj
+test_meet1 = assertEqual (lmeet physObj physObj) physObj
 --
---prop_compSymx :: Taxon -> Taxon -> Bool
---prop_compSymx = prop_compSym
+prop_compSymx :: Taxon -> Taxon -> Bool
+prop_compSymx = prop_compSym
 --
---prop_comm1x :: Taxon -> Taxon -> Bool
---prop_comm1x   = prop_comm1
+prop_comm1x :: Taxon -> Taxon -> Bool
+prop_comm1x   = prop_comm1  --ljoin a b == ljoin b a
+
+test_5 = assertEqual (showT (ljoin (bottom::Taxon) stuff)) "fromList []"
+
 --prop_comm2x :: Taxon -> Taxon -> Bool
 --prop_comm2x = prop_comm2
 
