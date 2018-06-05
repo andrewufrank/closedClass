@@ -71,6 +71,10 @@ class (Eq d, Lattice d) =>  LatticeTests d where
     prop_ide1 a   = ljoin a bottom == a
     prop_ide2 a = lmeet a top  == a
 
+    prop_idf1, prop_idf2 :: d -> Bool
+    prop_idf1 a   = ljoin a top == top
+    prop_idf2 a = lmeet a bottom  == bottom
+
     prop_compSym :: d -> d -> Bool
     prop_compSym a b = lcompare a b == reverse4 (lcompare b a)
 
@@ -116,8 +120,6 @@ prop_ide2x = prop_ide2
 prop_compSymx :: B4val -> B4val -> Bool
 prop_compSymx = prop_compSym
 
-prop_compSymx :: B4val -> B4val -> Bool
-prop_compSymx = prop_compSym
 
 --An algebraic structure (L, ||, &&), consisting of a set L
 -- and two binary operations || (join), and && (meet), on L
