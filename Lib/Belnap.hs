@@ -17,7 +17,7 @@
 
 module Belnap (B4val (..)
     , htf_Belnap_thisModulesTests
-    , partialEQ
+--    , partialEQ
     , PartialRel (..)
     , Lattice (..), LatticeTests (..)
     )
@@ -27,28 +27,20 @@ import Test.Framework
 import Uniform.Strings
 import Uniform.Error
 import Lattice
---import GHC.Generic
 
+data B4val = Both4 | True4 | False4 |  None4  deriving (Eq, Show, Read, Ord, Enum, Bounded)
+-- | the four logical values of Belnaps 4 valued logic B4
 
-import  Data.PartialOrd (PartialOrd, partialLEQ, partialEQ, partialLT, partialGT)
-import  qualified Data.PartialOrd as PO
-
+        -- affirmativ, reject = negative, indiffirent = not apply, contradiction
+        -- ord used for standard operations, eg. sort
 
 instance Lattice B4val where
     top = None4    -- no knowledge
     bottom = Both4  -- contradiction
-    lmeet None4 a = a
-    lmeet a None4 = a
-    lmeet a b = if a==b then a else bottom
-    ljoin Both4 a = a
-    ljoin a Both4 = a
-    ljoin a b = if a==b then a else top
+    lmeet2 a b = if a==b then a else bottom
+    ljoin2 a b = if a==b then a else top
 
-    lcompare a b = case PO.compare a b of
-                    Nothing -> INC
-                    Just EQ -> PEQ
-                    Just LT -> PLT
-                    Just GT -> PGT
+    lcompare2 a b = INC
 
 instance LatticeTests B4val
 
@@ -76,31 +68,7 @@ prop_ide2x = prop_ide2
 prop_compSymx :: B4val -> B4val -> Bool
 prop_compSymx = prop_compSym
 
-
-
-
-
-data B4val = Both4 | True4 | False4 |  None4  deriving (Eq, Show, Read, Ord, Enum, Bounded)
--- | the four logical values of Belnaps 4 valued logic B4
-
-        -- affirmativ, reject = negative, indiffirent = not apply, contradiction
-        -- ord used for standard operations, eg. sort
-
--- not4 :: BelnapLogic -> BelnapLogic
 instance  Arbitrary B4val where
     arbitrary = arbitraryBoundedEnum
 
-
-instance PartialOrd B4val where
-    partialLEQ _ Both4 = True
-    partialLEQ  None4 _  = True
-    partialLEQ _ _ = False
-
-
-
-prop_eq :: B4val -> B4val -> Bool
-prop_eq a b = (partialEQ a b) == (partialEQ b a )
-
-prop_lt_gt :: B4val -> B4val -> Bool
-prop_lt_gt a b = (partialLT a b) == ( (partialGT b a))
 

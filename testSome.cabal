@@ -20,7 +20,7 @@ library
         , uniform-error
         , transformers
 
-       , partial-order == 0.1.2.1.1
+--       , partial-order == 0.1.2.1.1
        , containers
 
 --        bytestring,

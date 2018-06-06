@@ -16,10 +16,7 @@
 {-# LANGUAGE DeriveAnyClass     #-}
 
 module Lattice (
---        B4val (..)
---    , htf_Belnap_thisModulesTests
---    , partialEQ
-     PartialRel (..)
+     PartialRel (..), reverse4
     , Lattice (..), LatticeTests (..)
     )
     where
@@ -29,9 +26,6 @@ import Uniform.Strings
 import Uniform.Error
 --import GHC.Generic
 
-
---import  Data.PartialOrd (PartialOrd, partialLEQ, partialEQ, partialLT, partialGT)
---import  qualified Data.PartialOrd as PO
 
 data PartialRel = PEQ | PGT | PLT | INC  deriving (Eq, Show, Read, Ord, Enum, Bounded)
 -- | the four possible values for compare in a partial order
@@ -57,8 +51,6 @@ class Eq d => Lattice d where
                         else if a==bottom || b==top then PLT
                         else lcompare2 a b
     lcompare2 :: d -> d -> PartialRel
-    -- lcompare2 deals with the general case only
---    order :: d -> d -> Ordering  -- use compare from Ord
     ljoin, lmeet :: d -> d -> d
     ljoin a b =
                 if a==bottom then b else if b==bottom then a
@@ -75,6 +67,7 @@ class Eq d => Lattice d where
     (/\), (\/) :: d -> d -> d
     (/\) = lmeet
     (\/) = ljoin
+    {-# MINIMAL lcompare2, ljoin2, lmeet2 #-}
 
 class (Eq d, Lattice d) =>  LatticeTests d where
     prop_comm1 :: d -> d -> Bool
@@ -104,22 +97,6 @@ class (Eq d, Lattice d) =>  LatticeTests d where
 
     prop_compSym :: d -> d -> Bool
     prop_compSym a b = lcompare a b == reverse4 (lcompare b a)
-
---instance Lattice B4val where
---    top = None4    -- no knowledge
---    bottom = Both4  -- contradiction
---    lmeet None4 a = a
---    lmeet a None4 = a
---    lmeet a b = if a==b then a else bottom
---    ljoin Both4 a = a
---    ljoin a Both4 = a
---    ljoin a b = if a==b then a else top
---
---    lcompare a b = case PO.compare a b of
---                    Nothing -> INC
---                    Just EQ -> PEQ
---                    Just LT -> PLT
---                    Just GT -> PGT
 
 
 -- from wiki :
