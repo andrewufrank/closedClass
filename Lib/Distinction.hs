@@ -16,7 +16,7 @@
 
 module Distinction (Lattice (..), LatticeTests(..)
     , Distinction, DistPaper (..)
-    , DistValue (..), dv2pair, pair2dv
+    , DistValue (..), dv2pair, pair2dv, showDV
     , B4val (..), PartialRel(..)
     , physObj'
     , human', stuff'
@@ -46,7 +46,15 @@ data DistValue = DV {d :: DistPaper, v:: B4val} -- | DVtop | DVbot
             deriving (Show, Read, Eq, Ord)
             -- only True4 and Fals4 should occur, rest is always mapped to DVtop or DVbot?
 
---instance Arbitrary (DistPaper, DistValue) where
+----instance Show DistValue where
+showDV (DV d v) = -- if isTop v then "" else
+                            (show d) ++ s
+        where s = case v of
+                    True4 -> "+"
+                    False4 -> "-"
+                    Both4 -> "X"
+                    None4 -> "*"
+
 
 instance Arbitrary DistValue where
     arbitrary =   fmap normalize $ fmap pair2dv arbitrary  -- (arbitrary, arbitrary)

@@ -33,8 +33,14 @@ instance Lattice Taxon where
     lcompare2 = compareTaxon
     lmeet2 = meetTaxon
     ljoin2 = joinTaxon
-    top =  dvList2taxon []
+    top =  dvList2taxon makeAllNone4 -- []
     bottom = Nothing
+
+makeAllNone4 = map makeOneNone4 allDist :: [DistValue]
+
+makeOneNone4 :: Distinction -> DistValue
+makeOneNone4 d = DV d None4
+allDist = [minBound .. maxBound] :: [DistPaper]
 
 instance LatticeTests Taxon
 type MDistVal = (Maybe [DistValue])
@@ -65,18 +71,25 @@ prop_conv1 a = if isBottom a then True  -- not required, arbitrary gives no bott
                 else a == (dvList2taxon . taxon2dvList "prop_conv1" $ a)
 
 normalizeTaxon :: [DistValue] -> Maybe [DistValue]
--- any Both4 gives bottom (Nothing), removes None4
+-- any Both4 gives bottom (Nothing) -- , removes None4
 -- removes duplicates
 normalizeTaxon  = fmap nub . normalizeTax
     where
         normalizeTax [] = Just []
         normalizeTax (a:as) = if a==bottom then Nothing
-                                else if a==top then normalizeTax as
+--                                else if a==top then normalizeTax as
                                 else fmap (a :) (normalizeTax as)
+
+showTaxon :: Taxon -> Text
+showTaxon t = if isBottom t then "Bottom"
+                else s2t . unwords . map showDV . filter (isTop . v) . taxon2dvList "showTaxon" $ t
+-- does not handle bottom?
 
 
 specialize :: Distinction -> B4val -> Taxon -> Taxon
-specialize d v t = if isBottom t then errorT ["specialize for bottom not possible"
+specialize d v t =
+--        Map.insert (d,v) t
+        if isBottom t then errorT ["specialize for bottom not possible"
                                             , showT d, showT v, showT t]
                       else dvList2taxon l2
 
@@ -120,24 +133,24 @@ joinTaxon t1 t2 = dvList2taxon l
         l = join33 l1 l2
 
 join33 :: [DistValue] -> [DistValue] -> [DistValue]
-join33 l1 l2  = zipWith
+join33 l1 l2  = l1 -- zipWith
 
 
 
-test_0 = assertEqual  "Just (fromList [(PhysObj,True4)])" (showT physObj)
-test_1 = assertEqual  "Just (fromList [(PhysObj,True4),(Human,True4)])" (showT human)
-test_2 = assertEqual  "Just (fromList [(PhysObj,True4),(Human,False4)])" (showT stuff)
-test_3 = assertEqual "Just (fromList [])" (showT (top::Taxon))
-test_4 = assertEqual "Nothing" (showT (bottom::Taxon))
+test_0 = assertEqual  "Just (fromList [(PhysObj,True4)])" (showTaxon physObj)
+test_1 = assertEqual  "Just (fromList [(PhysObj,True4),(Human,True4)])" (showTaxon human)
+test_2 = assertEqual  "Just (fromList [(PhysObj,True4),(Human,False4)])" (showTaxon stuff)
+test_3 = assertEqual "PhysObj* Human* Liquid* Edible* Tool*" (showTaxon (top::Taxon))
+test_4 = assertEqual "Bottom" (showTaxon (bottom::Taxon))
 
 
-test_PEQ1 = assertEqual PEQ (lcompare physObj physObj)
-test_PEQ2 = assertEqual INC (lcompare human stuff)
-test_PEQ3 = assertEqual PLT (lcompare stuff physObj)
-test_PEQ4 = assertEqual PGT (lcompare physObj human)
-test_PEQ5 = assertEqual INC (lcompare human edible)
-test_PEQ6 = assertEqual INC (lcompare milk edible)
-test_PEQ7 = assertEqual PGT (lcompare liquid milk)
+--test_PEQ1 = assertEqual PEQ (lcompare physObj physObj)
+--test_PEQ2 = assertEqual INC (lcompare human stuff)
+--test_PEQ3 = assertEqual PLT (lcompare stuff physObj)
+--test_PEQ4 = assertEqual PGT (lcompare physObj human)
+--test_PEQ5 = assertEqual INC (lcompare human edible)
+--test_PEQ6 = assertEqual INC (lcompare milk edible)
+--test_PEQ7 = assertEqual PGT (lcompare liquid milk)
 --
 --test_2b = assertEqual PLT (lcompare human' top)
 --test_2c = assertEqual PLT (lcompare human top)
