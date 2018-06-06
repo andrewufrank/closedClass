@@ -87,6 +87,9 @@ specialize d v t = if isBottom t then errorT ["specialize for bottom not possibl
 physObj = specialize PhysObj True4 top
 human = specialize Human True4 physObj
 stuff = specialize Human False4 physObj
+edible = specialize Edible True4 stuff
+liquid = specialize Liquid True4 stuff
+milk = specialize Edible True4 liquid
 
 compareTaxon :: Taxon -> Taxon -> PartialRel
 compareTaxon t1 t2 =   if isPrefixOf l1 l2
@@ -104,20 +107,20 @@ meetTaxon t1 t2 = dvList2taxon l
     where
         l1 = map pair2dv . Map.toAscList . fromJustNote "meetTaxon1" $ t1
         l2 = map pair2dv . Map.toAscList . fromJustNote "meetTaxon2" $ t2
-        l = meet2 l1 l2
+        l = meet33 l1 l2
 
-meet2 :: [DistValue] -> [DistValue] -> [DistValue]
-meet2 l1 l2  = zipWith lmeet l1 l2
+meet33 :: [DistValue] -> [DistValue] -> [DistValue]
+meet33 l1 l2  = zipWith lmeet l1 l2
 
 joinTaxon :: Taxon -> Taxon -> Taxon
 joinTaxon t1 t2 = dvList2taxon l
     where
         l1 = map pair2dv . Map.toAscList . fromJustNote "joinTaxon1" $ t1
         l2 = map pair2dv . Map.toAscList . fromJustNote "joinTaxon2" $ t2
-        l = join2 l1 l2
+        l = join33 l1 l2
 
-join2 :: [DistValue] -> [DistValue] -> [DistValue]
-join2 l1 l2  = l1
+join33 :: [DistValue] -> [DistValue] -> [DistValue]
+join33 l1 l2  = zipWith
 
 
 
@@ -128,10 +131,13 @@ test_3 = assertEqual "Just (fromList [])" (showT (top::Taxon))
 test_4 = assertEqual "Nothing" (showT (bottom::Taxon))
 
 
-test_PEQ1 = assertEqual PEQ (compareTaxon physObj physObj)
-test_PEQ2 = assertEqual INC (compareTaxon human stuff)
-test_PEQ3 = assertEqual PLT (compareTaxon stuff physObj)
-test_PEQ4 = assertEqual PGT (compareTaxon physObj human)
+test_PEQ1 = assertEqual PEQ (lcompare physObj physObj)
+test_PEQ2 = assertEqual INC (lcompare human stuff)
+test_PEQ3 = assertEqual PLT (lcompare stuff physObj)
+test_PEQ4 = assertEqual PGT (lcompare physObj human)
+test_PEQ5 = assertEqual INC (lcompare human edible)
+test_PEQ6 = assertEqual INC (lcompare milk edible)
+test_PEQ7 = assertEqual PGT (lcompare liquid milk)
 --
 --test_2b = assertEqual PLT (lcompare human' top)
 --test_2c = assertEqual PLT (lcompare human top)
