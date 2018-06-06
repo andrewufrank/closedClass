@@ -32,7 +32,7 @@ import Uniform.Error
 
 import Belnap
 
-
+-- | the distinctions in the paper (reduced)
 data DistPaper = PhysObj | Human | Liquid | Edible | Tool
 --            | Dairy | Cuttlery | Fermented
                 deriving (Show, Read, Eq, Ord, Enum, Bounded)
@@ -42,13 +42,13 @@ type Distinction = DistPaper
 instance Arbitrary DistPaper where
     arbitrary = arbitraryBoundedEnum
 
-data DistValue = DV {d :: DistPaper, v:: B4val} -- | DVtop | DVbot
+data DistValue dist = DV {d :: dist, v:: B4val} -- | DVtop | DVbot
             deriving (Show, Read, Eq, Ord)
             -- only True4 and Fals4 should occur, rest is always mapped to DVtop or DVbot?
 
 ----instance Show DistValue where
-showDV (DV d v) = -- if isTop v then "" else
-                            (show d) ++ s
+showDV :: Show d => DistValue d -> Text
+showDV (DV d v) = s2t $  (show d) ++ s
         where s = case v of
                     True4 -> "+"
                     False4 -> "-"
@@ -56,7 +56,7 @@ showDV (DV d v) = -- if isTop v then "" else
                     None4 -> "*"
 
 
-instance Arbitrary DistValue where
+instance Arbitrary d => Arbitrary (DistValue d) where
     arbitrary =   fmap normalize $ fmap pair2dv arbitrary  -- (arbitrary, arbitrary)
 
 -- these are raw distinction values, not taxa
@@ -64,8 +64,8 @@ physObj' = DV PhysObj True4
 human' = DV Human True4
 stuff' = DV Human False4
 liquid' = DV Liquid True4
-top' = top :: DistValue
-bot' = bottom :: DistValue
+top' = top :: DistValuePaper
+bot' = bottom :: DistValuePaper
 
 test_join1 = assertEqual physObj' (ljoin physObj' physObj')
 test_join2 = assertEqual (DV{d = Human, v = None4}) (ljoin human' stuff')
@@ -79,39 +79,22 @@ pair2dv (d,v) = DV d v
 --pair2dv (minBound, Both4) = DVbot
 --pair2dv a = errorT ["pair2dv for", showT a]
 
-prop_inv1 :: DistValue -> Bool
+prop_inv1 :: DistValuePaper -> Bool
 prop_inv1 a = a == (pair2dv . dv2pair $ a)
 
 prop_inv2 :: (Distinction,B4val) -> Bool
 prop_inv2 a = a == (dv2pair . pair2dv $ a)
 
-instance Lattice DistValue where
---    lcompare (DV d1 v1) (DV d2 v2) =
+instance (Eq d, Bounded d) => Lattice (DistValue d) where
     lcompare2 a@(DV d1 v1) b@(DV d2 v2) = if d1 == d2 then lcompare v1 v2 else INC
---    lcompare DVbot DVbot = PEQ
---    lcompare DVtop _ = PGT
---    lcompare _ DVtop = PLT
---    lcompare DVbot _ = PLT
---    lcompare _ DVbot = PGT
     lmeet2  (DV d1 v1)  (DV d2 v2) = if d1 == d2 then normalize(DV d1 (lmeet v1 v2)) else bottom
---    lmeet DVtop a = a
---    lmeet a DVtop = a
---    lmeet DVbot a = bottom
---    lmeet a DVbot = bottom
---    lmeet x y = errorT ["Lattice DistValue lmeet", showT x, showT y]
     ljoin2  (DV d1 v1)  (DV d2 v2) = if d1 == d2 then normalize(DV d1 (ljoin v1 v2)) else top
---        if d1 == d2 then normalize(DV d1 (ljoin v1 v2)) else top
---    ljoin a DVbot = a
---    ljoin DVbot a = a
---    ljoin a DVtop = top
---    ljoin DVtop a = top
---    ljoin x y = errorT ["Lattice DistValue ljoin", showT x, showT y]
     top = pair2dv (minBound, None4)  -- alternative DVtop
     bottom = pair2dv (minBound, Both4)   -- DVbot
 
 normalize a@(DV d v) = a -- if v==bottom then bottom else if v==top then top else a
 
-instance LatticeTests DistValue
+instance (Eq d, Bounded d) =>  LatticeTests (DistValue d)
 
 test_1 = assertEqual (lsub human' human')  False
 test_2 = assertEqual (lsub human' top') True
@@ -124,24 +107,26 @@ test_6 = assertEqual (lmeet human' liquid') bottom
 test_7 = assertEqual (ljoin human' liquid') top
 --    prop_ass1 a b c = lmeet a (lmeet b c) ==  lmeet(lmeet a b)  c
 
-prop_compSymx :: DistValue -> DistValue -> Bool
+type DistValuePaper = DistValue DistPaper
+
+prop_compSymx :: DistValuePaper -> DistValuePaper -> Bool
 prop_compSymx = prop_compSym -- lcompare a b == reverse4 (lcompare b a)
 
-prop_ide1x, prop_ide2x :: DistValue -> Bool
+prop_ide1x, prop_ide2x :: DistValuePaper -> Bool
 prop_ide1x = prop_ide1
 prop_ide2x = prop_ide2
 --
-prop_id1x, prop_id2x :: DistValue -> Bool
+prop_id1x, prop_id2x :: DistValuePaper -> Bool
 prop_id1x = prop_id1  -- ljoin a a == a
 prop_id2x = prop_id2
 --
 test_9 = assertEqual (ljoin liquid' liquid') liquid'
 
-prop_ass1x, prop_ass2x :: DistValue -> DistValue -> DistValue -> Bool
+prop_ass1x, prop_ass2x :: DistValuePaper -> DistValuePaper -> DistValuePaper -> Bool
 prop_ass1x = prop_ass1 -- lmeet a (lmeet b c) ==  lmeet(lmeet a b)  c
 prop_ass2x = prop_ass2 -- ljoin a (ljoin b c) == ljoin (ljoin a b)  c
 
-prop_abs1x, prop_abs2x :: DistValue -> DistValue ->  Bool
+prop_abs1x, prop_abs2x :: DistValuePaper -> DistValuePaper ->  Bool
 prop_abs1x = prop_abs1
 prop_abs2x = prop_abs2
 
