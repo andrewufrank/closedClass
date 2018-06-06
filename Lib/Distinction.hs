@@ -67,6 +67,9 @@ liquid' = DV Liquid True4
 top' = top :: DistValue
 bot' = bottom :: DistValue
 
+test_join1 = assertEqual physObj' (ljoin physObj' physObj')
+test_join2 = assertEqual (DV{d = Human, v = None4}) (ljoin human' stuff')
+
 dv2pair (DV d v) = (d,v)  -- wie convert DVtop DVbot ??
 --dv2pair DVtop = (minBound, None4)
 --dv2pair DVbot = (minBound, Both4)
@@ -75,6 +78,12 @@ pair2dv (d,v) = DV d v
 --pair2dv (minBound, None4) = DVtop
 --pair2dv (minBound, Both4) = DVbot
 --pair2dv a = errorT ["pair2dv for", showT a]
+
+prop_inv1 :: DistValue -> Bool
+prop_inv1 a = a == (pair2dv . dv2pair $ a)
+
+prop_inv2 :: (Distinction,B4val) -> Bool
+prop_inv2 a = a == (dv2pair . pair2dv $ a)
 
 instance Lattice DistValue where
 --    lcompare (DV d1 v1) (DV d2 v2) =
@@ -100,7 +109,7 @@ instance Lattice DistValue where
     top = pair2dv (minBound, None4)  -- alternative DVtop
     bottom = pair2dv (minBound, Both4)   -- DVbot
 
-normalize a@(DV d v) = if v==bottom then bottom else if v==top then top else a
+normalize a@(DV d v) = a -- if v==bottom then bottom else if v==top then top else a
 
 instance LatticeTests DistValue
 
@@ -108,8 +117,8 @@ test_1 = assertEqual (lsub human' human')  False
 test_2 = assertEqual (lsub human' top') True
 test_3 = assertEqual (lsub human' stuff') False
 
-test_4 = assertEqual (lmeet human' stuff') bottom
-test_5 = assertEqual (ljoin human' stuff') top
+test_4 = assertEqual (DV{d = Human, v = Both4}) (lmeet human' stuff')
+test_5 = assertEqual (DV{d = Human, v = None4}) (ljoin human' stuff')
 
 test_6 = assertEqual (lmeet human' liquid') bottom
 test_7 = assertEqual (ljoin human' liquid') top
