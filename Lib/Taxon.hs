@@ -149,6 +149,9 @@ test_1 = assertEqual  "PhysObj+ Human+ Liquid* Edible* Tool*" (showTaxon human)
 test_2 = assertEqual  "PhysObj+ Human- Liquid* Edible* Tool*" (showTaxon stuff)
 test_3 = assertEqual "PhysObj* Human* Liquid* Edible* Tool*" (showTaxon (top::Taxon))
 test_4 = assertEqual "Bottom" (showTaxon (bottom::Taxon))
+test_edible = assertEqual "PhysObj+ Human- Liquid* Edible+ Tool*" (showTaxon (edible::Taxon))
+test_milk = assertEqual "PhysObj+ Human- Liquid+ Edible+ Tool*" (showTaxon (milk::Taxon))
+test_liquid = assertEqual "PhysObj+ Human- Liquid+ Edible* Tool*" (showTaxon (liquid::Taxon))
 
 
 --test_PEQ1 = assertEqual PEQ (lcompare physObj physObj)
