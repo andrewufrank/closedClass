@@ -39,6 +39,7 @@ library
 
     exposed-modules:
          FirstSub
+         Lattice
          SecondSub
          Belnap
          Distinction

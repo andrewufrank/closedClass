@@ -69,37 +69,27 @@ pair2dv a = errorT ["pair2dv for", showT a]
 
 instance Lattice DistValue where
 --    lcompare (DV d1 v1) (DV d2 v2) =
-    lcompare a@(DV d1 v1) b@(DV d2 v2) =
-        if a == b then PEQ
-                 else if a==top || b==bottom then PGT
-                     else if a==bottom || b==top then PLT
-                                 else if d1 == d2 then lcompare v1 v2 else INC
+    lcompare2 a@(DV d1 v1) b@(DV d2 v2) = if d1 == d2 then lcompare v1 v2 else INC
 --    lcompare DVbot DVbot = PEQ
 --    lcompare DVtop _ = PGT
 --    lcompare _ DVtop = PLT
 --    lcompare DVbot _ = PLT
 --    lcompare _ DVbot = PGT
-    lmeet a@(DV d1 v1) b@(DV d2 v2) =
-        if a==top then b else if b==top then a
-                     else if a==bottom || b==bottom then bottom
-                                 else  if d1 == d2 then normalize(DV d1 (lmeet v1 v2)) else bottom
+    lmeet2  (DV d1 v1)  (DV d2 v2) = if d1 == d2 then normalize(DV d1 (lmeet v1 v2)) else bottom
 --    lmeet DVtop a = a
 --    lmeet a DVtop = a
 --    lmeet DVbot a = bottom
 --    lmeet a DVbot = bottom
 --    lmeet x y = errorT ["Lattice DistValue lmeet", showT x, showT y]
-    ljoin a@(DV d1 v1) b@(DV d2 v2) =
-                if a==bottom then b else if b==bottom then a
-                     else if a==top || b==top then top
-                                 else  if d1 == d2 then normalize(DV d1 (ljoin v1 v2)) else top
+    ljoin2  (DV d1 v1)  (DV d2 v2) = if d1 == d2 then normalize(DV d1 (ljoin v1 v2)) else top
 --        if d1 == d2 then normalize(DV d1 (ljoin v1 v2)) else top
 --    ljoin a DVbot = a
 --    ljoin DVbot a = a
 --    ljoin a DVtop = top
 --    ljoin DVtop a = top
 --    ljoin x y = errorT ["Lattice DistValue ljoin", showT x, showT y]
-    top = pair2dv (minBound, None4)
-    bottom = pair2dv (minBound, Both4)
+    top = pair2dv (minBound, None4)  -- alternative DVtop
+    bottom = pair2dv (minBound, Both4)   -- DVbot
 
 normalize a@(DV d v) = if v==bottom then bottom else if v==top then top else a
 
