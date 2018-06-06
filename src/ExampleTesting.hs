@@ -15,6 +15,7 @@ import           Test.Framework
 --import {-@ HTF_TESTS @-} Belnap
 import {-@ HTF_TESTS @-} Distinction
 import {-@ HTF_TESTS @-} Taxon
+import {-@ HTF_TESTS @-} PaperTaxa
 
 main =  do  -- with tests in other modules
     putStrLn "HTF ExampleTest.hs:\n"
