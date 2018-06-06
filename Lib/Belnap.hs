@@ -12,7 +12,6 @@
 {-# LANGUAGE ScopedTypeVariables   #-}
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
-{-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE DeriveAnyClass     #-}
 
 module Belnap (B4val (..)

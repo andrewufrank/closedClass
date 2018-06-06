@@ -12,11 +12,10 @@
 {-# LANGUAGE ScopedTypeVariables   #-}
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
-{-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE DeriveAnyClass     #-}
 
 module Distinction (Lattice (..), LatticeTests(..)
-    , DistPaper
+    , Distinction, DistPaper (..)
     , DistValue (..), dv2pair, pair2dv
     , B4val (..), PartialRel(..)
     , physObj'
@@ -34,9 +33,11 @@ import Uniform.Error
 import Belnap
 
 
-data DistPaper = PhysObj | Human | Liquid | Edible | Dairy
-            | Tool | Cuttlery | Fermented
+data DistPaper = PhysObj | Human | Liquid | Edible | Tool
+--            | Dairy | Cuttlery | Fermented
                 deriving (Show, Read, Eq, Ord, Enum, Bounded)
+
+type Distinction = DistPaper
 
 instance Arbitrary DistPaper where
     arbitrary = arbitraryBoundedEnum
@@ -61,11 +62,11 @@ bot' = bottom :: DistValue
 dv2pair (DV d v) = (d,v)  -- wie convert DVtop DVbot ??
 --dv2pair DVtop = (minBound, None4)
 --dv2pair DVbot = (minBound, Both4)
-dv2pair a = errorT ["dv2pair for", showT a]
+--dv2pair a = errorT ["dv2pair for", showT a]
 pair2dv (d,v) = DV d v
 --pair2dv (minBound, None4) = DVtop
 --pair2dv (minBound, Both4) = DVbot
-pair2dv a = errorT ["pair2dv for", showT a]
+--pair2dv a = errorT ["pair2dv for", showT a]
 
 instance Lattice DistValue where
 --    lcompare (DV d1 v1) (DV d2 v2) =

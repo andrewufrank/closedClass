@@ -12,7 +12,6 @@
 {-# LANGUAGE ScopedTypeVariables   #-}
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
-{-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE DeriveAnyClass     #-}
 
 module Lattice (
@@ -64,10 +63,13 @@ class Eq d => Lattice d where
     -- deals with the generic case only
 
     top, bottom :: d
+    isTop, isBottom :: d -> Bool
+    isTop = (top==)
+    isBottom = (bottom==)
     (/\), (\/) :: d -> d -> d
     (/\) = lmeet
     (\/) = ljoin
-    {-# MINIMAL lcompare2, ljoin2, lmeet2 #-}
+    {-# MINIMAL lcompare2, ljoin2, lmeet2, top, bottom #-}
 
 class (Eq d, Lattice d) =>  LatticeTests d where
     prop_comm1 :: d -> d -> Bool

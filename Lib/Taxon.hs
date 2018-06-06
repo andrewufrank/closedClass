@@ -12,8 +12,8 @@
 {-# LANGUAGE ScopedTypeVariables   #-}
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeSynonymInstances  #-}
-{-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE DeriveAnyClass     #-}
+--{-# LANGUAGE OverlappingInstances     #-}
 
 module Taxon
     where
@@ -27,45 +27,83 @@ import Distinction
 import qualified Data.Map as Map
 import Data.List
 
-type Taxon = Map.Map DistPaper B4val
+type Taxon = Maybe (Map.Map Distinction B4val)
 
 instance Lattice Taxon where
-    lcompare = compareTaxon
-    lmeet = meetTaxon
-    ljoin = joinTaxon
-    top = dvList2taxon [top]
-    bottom = dvList2taxon []
+    lcompare2 = compareTaxon
+    lmeet2 = meetTaxon
+    ljoin2 = joinTaxon
+    top =  dvList2taxon []
+    bottom = Nothing
 
 instance LatticeTests Taxon
+type MDistVal = (Maybe [DistValue])
+
+instance {-# OVERLAPS #-} Arbitrary MDistVal where
+    -- produce only semi-lattice, no bottom
+    arbitrary = do
+        r1 :: [DistValue] <-   arbitrary
+        let r2 = normalizeTaxon r1
+        return r2
+
+instance {-# OVERLAPS #-} Arbitrary Taxon where
+-- produces only elements for a semi lattice (no bottom)
+    arbitrary = do
+        r2 ::MDistVal <- suchThat arbitrary (not . isNothing)
+        return . dvList2taxon . fromJustNote "arbitrary dvList2taxon" $ r2
+
 
 dvList2taxon :: [DistValue] -> Taxon
-dvList2taxon dvs =  Map.fromList . map dv2pair . normalizeTaxon $ dvs
+dvList2taxon dvs = fmap Map.fromList .  fmap (map  dv2pair) . normalizeTaxon $ dvs
 
-normalizeTaxon :: [DistValue] -> [DistValue]
-normalizeTaxon [] = []
-normalizeTaxon (a:as) = if a==bottom then normalizeTaxon as else a: normalizeTaxon as
+taxon2dvList :: String -> Taxon -> [DistValue]
+taxon2dvList msg t =  if isBottom t then errorT ["taxon2dvList not for bottom"]
+                        else map pair2dv . Map.toAscList . fromJustNote msg $ t
 
+prop_conv1 :: Taxon -> Bool
+prop_conv1 a = if isBottom a then True  -- not required, arbitrary gives no bottom
+                else a == (dvList2taxon . taxon2dvList "prop_conv1" $ a)
+
+normalizeTaxon :: [DistValue] -> Maybe [DistValue]
+-- any Both4 gives bottom (Nothing), removes None4
+-- removes duplicates
+normalizeTaxon  = fmap nub . normalizeTax
+    where
+        normalizeTax [] = Just []
+        normalizeTax (a:as) = if a==bottom then Nothing
+                                else if a==top then normalizeTax as
+                                else fmap (a :) (normalizeTax as)
+
+
+specialize :: Distinction -> B4val -> Taxon -> Taxon
+specialize d v t = if isBottom t then errorT ["specialize for bottom not possible"
+                                            , showT d, showT v, showT t]
+                      else dvList2taxon l2
+
+          where l1 = taxon2dvList "specialize" t :: [DistValue]
+                l2 = (DV d v) : l1
+                -- order is not relevant, is produced when extracted from map
+
+physObj = specialize PhysObj True4 top
+human = specialize Human True4 physObj
+stuff = specialize Human False4 physObj
 
 compareTaxon :: Taxon -> Taxon -> PartialRel
-compareTaxon t1 t2 = if l1 == l2
-                        then PEQ
-                        else if t1==top || t2==bottom then PGT
-                        else if t1==bottom || t2==top then PLT
-                        else if isPrefixOf l1 l2
+compareTaxon t1 t2 =   if isPrefixOf l1 l2
                                     then PGT
                                     else if isPrefixOf l2 l1
                                         then PLT
                                         else INC
     where
-        l1 = Map.toAscList t1
-        l2 = Map.toAscList t2
+        l1 = Map.toAscList . fromJustNote "compareTaxon1" $ t1
+        l2 = Map.toAscList . fromJustNote "compareTaxon2" $ t2
 
 
 meetTaxon :: Taxon -> Taxon -> Taxon
 meetTaxon t1 t2 = dvList2taxon l
     where
-        l1 = map pair2dv . Map.toAscList $ t1
-        l2 = map pair2dv . Map.toAscList $ t2
+        l1 = map pair2dv . Map.toAscList . fromJustNote "meetTaxon1" $ t1
+        l2 = map pair2dv . Map.toAscList . fromJustNote "meetTaxon2" $ t2
         l = meet2 l1 l2
 
 meet2 :: [DistValue] -> [DistValue] -> [DistValue]
@@ -74,50 +112,48 @@ meet2 l1 l2  = zipWith lmeet l1 l2
 joinTaxon :: Taxon -> Taxon -> Taxon
 joinTaxon t1 t2 = dvList2taxon l
     where
-        l1 = map pair2dv . Map.toAscList $ t1
-        l2 = map pair2dv . Map.toAscList $ t2
+        l1 = map pair2dv . Map.toAscList . fromJustNote "joinTaxon1" $ t1
+        l2 = map pair2dv . Map.toAscList . fromJustNote "joinTaxon2" $ t2
         l = join2 l1 l2
 
 join2 :: [DistValue] -> [DistValue] -> [DistValue]
 join2 l1 l2  = l1
 
-physObj = dvList2taxon [physObj']
-human = dvList2taxon [physObj', human']
-stuff = dvList2taxon [physObj', stuff']
-
-test_0 = assertEqual (showT physObj) "fromList [(PhysObj,True4)]"
-test_1 = assertEqual (showT human) "fromList [(PhysObj,True4),(Human,True4)]"
-test_2 = assertEqual (showT stuff) "fromList [(PhysObj,True4),(Human,False4)]"
-test_3 = assertEqual (showT (top::Taxon)) "fromList [(PhysObj,None4)]"
-test_4 = assertEqual (showT (bottom::Taxon)) "fromList []"
 
 
-test_PEQ1 = assertEqual (compareTaxon physObj physObj) PEQ
-test_PEQ2 = assertEqual (compareTaxon human stuff) INC
-test_PEQ3 = assertEqual (compareTaxon stuff physObj) PLT
-test_PEQ4 = assertEqual (compareTaxon physObj human) PGT
-
-test_2b = assertEqual PLT (lcompare human' top)
-test_2c = assertEqual PLT (lcompare human top)
+test_0 = assertEqual  "Just (fromList [(PhysObj,True4)])" (showT physObj)
+test_1 = assertEqual  "Just (fromList [(PhysObj,True4),(Human,True4)])" (showT human)
+test_2 = assertEqual  "Just (fromList [(PhysObj,True4),(Human,False4)])" (showT stuff)
+test_3 = assertEqual "Just (fromList [])" (showT (top::Taxon))
+test_4 = assertEqual "Nothing" (showT (bottom::Taxon))
 
 
-test_1a = assertEqual (lsub human human)  False
-test_2a = assertEqual (lsub human top) True
-test_3a = assertEqual (lsub human stuff) False
-
-
-test_meet1 = assertEqual (lmeet physObj physObj) physObj
+test_PEQ1 = assertEqual PEQ (compareTaxon physObj physObj)
+test_PEQ2 = assertEqual INC (compareTaxon human stuff)
+test_PEQ3 = assertEqual PLT (compareTaxon stuff physObj)
+test_PEQ4 = assertEqual PGT (compareTaxon physObj human)
 --
-prop_compSymx :: Taxon -> Taxon -> Bool
-prop_compSymx = prop_compSym
+--test_2b = assertEqual PLT (lcompare human' top)
+--test_2c = assertEqual PLT (lcompare human top)
 --
-prop_comm1x :: Taxon -> Taxon -> Bool
-prop_comm1x   = prop_comm1  --ljoin a b == ljoin b a
-
-test_5 = assertEqual (showT (ljoin (bottom::Taxon) stuff)) "fromList []"
-
---prop_comm2x :: Taxon -> Taxon -> Bool
---prop_comm2x = prop_comm2
+--
+--test_1a = assertEqual (lsub human human)  False
+--test_2a = assertEqual (lsub human top) True
+--test_3a = assertEqual (lsub human stuff) False
+--
+--
+--test_meet1 = assertEqual (lmeet physObj physObj) physObj
+----
+--prop_compSymx :: Taxon -> Taxon -> Bool
+--prop_compSymx = prop_compSym
+----
+--prop_comm1x :: Taxon -> Taxon -> Bool
+--prop_comm1x   = prop_comm1  --ljoin a b == ljoin b a
+--
+--test_5 = assertEqual (showT (ljoin (bottom::Taxon) stuff)) "fromList []"
+--
+----prop_comm2x :: Taxon -> Taxon -> Bool
+----prop_comm2x = prop_comm2
 
 --prop_ass1x, prop_ass2x :: Taxon -> Taxon -> Taxon -> Bool
 --prop_ass1x = prop_ass1
