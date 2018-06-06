@@ -38,6 +38,9 @@ instance Taxons Taxon where
     showTaxon t =  s2t . unwords . map showDV
                                 . taxon2dvList  $ t
 
+specializeList :: [(Distinction, B4val)] -> Taxon -> Taxon
+specializeList l t1= foldl (\t (d,v) -> specialize d v t) t1  l
+
 dvList2taxon :: [DistValue] -> Taxon
 dvList2taxon   =  Taxon . Map.fromList .   (map  dv2pair)
 
@@ -45,7 +48,7 @@ taxon2dvList :: Taxon -> [DistValue]
 taxon2dvList   =        map pair2dv . Map.toAscList . unTaxon
 
 instance Lattice Taxon where
---    lcompare = compareTaxon
+    lcompare = compareTaxon
     lmeet = meetTaxon
     ljoin = joinTaxon
     top =  dvList2taxon (makeAll None4)-- []
@@ -71,17 +74,25 @@ meetTaxon a b = dvList2taxon l
         bb = taxon2dvList b :: [DistValue]
         l = zipWith lmeet aa bb :: [DistValue]
 
+compareTaxon :: Taxon -> Taxon -> PartialRel
+compareTaxon a b = if a==b then PEQ
+                    else if a==l then PGT
+                    else if b==l then PLT
+                    else INC
+    where l = joinTaxon a b
+
 ph = taxon2dvList physObj
 t = zipWith ljoin ph ph
 test_x = assertEqual ph t
 
 
 
---test_join1 = assertEqual physObj (joinTaxon physObj physObj)
---test_join_milk = assertEqual physObj (joinTaxon milk bread)
+test_join1 = assertEqual physObj (joinTaxon physObj physObj)
+test_join_milk = assertEqual someFood (joinTaxon milk bread)
     -- [(PhysObj, True4), (Human, False4), (Liquid, None4),
     --   (Edible, True4), (Tool, None4)]
-
+someFood = specializeList [(PhysObj, True4), (Human, False4), (Liquid, None4),
+              (Edible, True4), (Tool, None4)] ttop
 prop_comm1x :: Taxon -> Taxon -> Bool
 prop_comm1x   = prop_comm1
 prop_comm2x :: Taxon -> Taxon -> Bool
@@ -106,7 +117,6 @@ prop_ide2x = prop_ide2
 prop_compSymx :: Taxon -> Taxon -> Bool
 prop_compSymx = prop_compSym
 
---compareTaxon :: Taxon -> Taxon -> PartialRel
 --compareTaxon a b = if null a_b then PGT
 --                        else if null b_a then PLT
 --                            else INC
